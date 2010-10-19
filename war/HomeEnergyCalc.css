@@ -1,0 +1,49 @@
+h1 {
+  	font-size: 50pt;
+	font-family: arial black;
+	color: white;
+  	margin: 30px;
+  	text-align: center;
+  	letter-spacing: -5px;
+}
+
+.app {
+	margin: 0px auto;
+}
+
+.container, .resultsPanel, .appliancePanels {
+	padding: 40px;
+}
+
+.resultsPanelContainer, .appliancePanelsContainer{
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	border: 5pt solid #3c7201;
+	-moz-box-shadow: 4px 4px 15px rgba(0,0,0,0.5); /* FF3.5+ */
+  	-webkit-box-shadow: 4px 4px 15px rgba(0,0,0,0.5); /* Saf3.0+, Chrome */
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.5); /* Opera 10.5, IE 9 */
+}
+
+.container {
+  	font-size: 75pt;
+	font-family: arial black;
+	color: #3c7201;
+}
+
+.resultsPanel {
+
+}
+
+.resultsPanelContainer {
+	background-color: white;
+	margin: 10px auto;
+}
+
+.appliancePanels {
+
+}
+
+.appliancePanelsContainer {
+	background-color: white;
+	margin: 10px auto;
+}

@@ -14,13 +14,18 @@ public class Appliance {
 	private int minutes = 0;
 	private int uses = 0;
 	private boolean constant = false;
+	private boolean multiple;
 	private int quantity = 0;
+	private int standbyWatts;
+	private boolean usesStandby;
 	
-	public Appliance (String name, int watts, int use, int category) {
+	public Appliance (String name, int watts, int use, int category, boolean multiple, int standbyWatts) {
 		setName(name);
 		setUse(use);
 		setWatts(watts);
 		setCategory(category);
+		setMultiple(multiple);
+		setStandbyWatts(standbyWatts);
 	}
 	
 	/**
@@ -151,6 +156,48 @@ public class Appliance {
 	 */
 	public int getQuantity() {
 		return quantity;
+	}
+
+	/**
+	 * @param multiple the multiple to set
+	 */
+	public void setMultiple(boolean multiple) {
+		this.multiple = multiple;
+	}
+
+	/**
+	 * @return the multiple
+	 */
+	public boolean isMultiple() {
+		return multiple;
+	}
+
+	/**
+	 * @param standbyCapable the standbyCapable to set
+	 */
+	public void setStandbyWatts(int standbyWatts) {
+		this.standbyWatts = standbyWatts;
+	}
+
+	/**
+	 * @return the standbyCapable
+	 */
+	public int getStandbyWatts() {
+		return standbyWatts;
+	}
+
+	/**
+	 * @param usesStandby the usesStandby to set
+	 */
+	public void setUsesStandby(boolean usesStandby) {
+		this.usesStandby = usesStandby;
+	}
+
+	/**
+	 * @return the usesStandby
+	 */
+	public boolean isUsesStandby() {
+		return usesStandby;
 	}
 
 	

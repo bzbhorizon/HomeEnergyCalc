@@ -3,6 +3,7 @@ package bzb.gwt.hec.client;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -28,9 +29,14 @@ public class TimingDialog extends DialogBox {
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		final Button doneButton = new Button("Done");
 		
-		hp.add(new HTML("Quantity:"));
 		final TextBox quantity = new TextBox();
-		hp.add(quantity);
+		if (this.home.getAppliance(appName).isMultiple()) {
+			hp.add(new HTML("Quantity:"));
+			hp.add(quantity);
+		}
+		
+		final CheckBox usesStandby = new CheckBox();
+		usesStandby.setValue(false);
 		
 		if (this.home.getAppliance(appName).getUse() == Appliance.USE_SINGLE) {
 			final ListBox uses = new ListBox();
@@ -43,12 +49,17 @@ public class TimingDialog extends DialogBox {
 			
 			doneButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					try {
-						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
-					} catch (Exception e) {
-						
+					if (TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isMultiple()) {
+						try {
+							TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
+						} catch (Exception e) {
+							
+						}
+					} else {
+						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(1);
 					}
 					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUses(uses.getSelectedIndex());
+					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUsesStandby(usesStandby.getValue());
 					TimingDialog.this.home.updateResults();
 					TimingDialog.this.hide();
 				}
@@ -71,12 +82,25 @@ public class TimingDialog extends DialogBox {
 			
 			doneButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
+					if (TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isMultiple()) {
+						try {
+							TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
+						} catch (Exception e) {
+							
+						}
+					}
 					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setHours(hours.getSelectedIndex());
 					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setMinutes(minutes.getSelectedIndex());
+					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUsesStandby(usesStandby.getValue());
 					TimingDialog.this.home.updateResults();
 					TimingDialog.this.hide();
 				}
 			});
+		}
+		
+		if (this.home.getAppliance(appName).getStandbyWatts() > 0) {
+			hp.add(new HTML("Left on standby?"));
+			hp.add(usesStandby);
 		}
 		
 		content.add(hp);

@@ -1,7 +1,7 @@
 h1 {
   	font-size: 50pt;
 	font-family: arial black;
-	color: white;
+	color: #bbbbbb;
   	margin: 30px;
   	text-align: center;
   	letter-spacing: -5px;
@@ -16,13 +16,23 @@ h1 {
 }
 
 .app {
-	-moz-border-radius: 15px;
+	/*-moz-border-radius: 15px;
 	border-radius: 15px;
-	border: 5pt solid #3c7201;
-	-moz-box-shadow: 4px 4px 15px rgba(0,0,0,0.5); /* FF3.5+ */
-  	-webkit-box-shadow: 4px 4px 15px rgba(0,0,0,0.5); /* Saf3.0+, Chrome */
-    box-shadow: 4px 4px 15px rgba(0,0,0,0.5); /* Opera 10.5, IE 9 */
-    background-color: white;
+	border: 5pt solid #3c7201;*/
+	-moz-box-shadow: 4px 4px 15px rgba(0,0,0,0.2); /* FF3.5+ */
+  	-webkit-box-shadow: 4px 4px 15px rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.2); /* Opera 10.5, IE 9 */
+
+	/* fallback (Opera) */
+    background: white;
+    /* Mozilla: */
+    background: -moz-linear-gradient(top, white, #eeeeee);
+    /* Chrome, Safari:*/
+    background: -webkit-gradient(linear,
+                left top, left bottom, from(white), to(#eeeeee));
+    /* MSIE */
+    filter: progid:DXImageTransform.Microsoft.Gradient(
+                StartColorStr='white', EndColorStr='#eeeeee', GradientType=0);
 }
 
 .container {

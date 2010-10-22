@@ -37,7 +37,7 @@ public class AppliancePanels extends TabPanel {
 								AppliancePanels.this.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setConstant(true);
 								AppliancePanels.this.home.updateResults();
 							} else {
-								td = new TimingDialog(AppliancePanels.this.home, ((ToggleButton) event.getSource()).getUpFace().getText());
+								td = new TimingDialog(AppliancePanels.this.home, (ToggleButton) event.getSource());
 							}
 					    } else {
 					    	AppliancePanels.this.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setHours(0);

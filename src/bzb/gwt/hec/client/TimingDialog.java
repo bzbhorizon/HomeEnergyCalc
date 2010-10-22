@@ -11,16 +11,19 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class TimingDialog extends DialogBox {
 
 	private HomeEnergyCalc home;
 	private String appName;
+	private ToggleButton source;
 	
-	public TimingDialog(HomeEnergyCalc home, String appName) {
+	public TimingDialog(HomeEnergyCalc home, ToggleButton source) {
 		this.home = home;
-		this.appName = appName;
+		this.source = source;
+		this.appName = source.getUpFace().getText();
 		
 		VerticalPanel content = new VerticalPanel();
 		content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -49,18 +52,22 @@ public class TimingDialog extends DialogBox {
 			
 			doneButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					if (TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isMultiple()) {
-						try {
-							TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
-						} catch (Exception e) {
-							
+					if (uses.getSelectedIndex() > 0 || TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isUsesStandby()) {
+						if (TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isMultiple()) {
+							try {
+								TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
+							} catch (Exception e) {
+								
+							}
+						} else {
+							TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(1);
 						}
+						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUses(uses.getSelectedIndex());
+						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUsesStandby(usesStandby.getValue());
+						TimingDialog.this.home.updateResults();
 					} else {
-						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(1);
+						TimingDialog.this.source.setDown(false);
 					}
-					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUses(uses.getSelectedIndex());
-					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUsesStandby(usesStandby.getValue());
-					TimingDialog.this.home.updateResults();
 					TimingDialog.this.hide();
 				}
 			});
@@ -82,17 +89,21 @@ public class TimingDialog extends DialogBox {
 			
 			doneButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					if (TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isMultiple()) {
-						try {
-							TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
-						} catch (Exception e) {
-							
+					if (hours.getSelectedIndex() > 0 || minutes.getSelectedIndex() > 0 || TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isUsesStandby()) {
+						if (TimingDialog.this.home.getAppliance(TimingDialog.this.appName).isMultiple()) {
+							try {
+								TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
+							} catch (Exception e) {
+								
+							}
 						}
+						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setHours(hours.getSelectedIndex());
+						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setMinutes(minutes.getSelectedIndex());
+						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUsesStandby(usesStandby.getValue());
+						TimingDialog.this.home.updateResults();
+					} else {
+						TimingDialog.this.source.setDown(false);
 					}
-					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setHours(hours.getSelectedIndex());
-					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setMinutes(minutes.getSelectedIndex());
-					TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUsesStandby(usesStandby.getValue());
-					TimingDialog.this.home.updateResults();
 					TimingDialog.this.hide();
 				}
 			});
@@ -112,3 +123,5 @@ public class TimingDialog extends DialogBox {
 	}
 
 }
+
+	

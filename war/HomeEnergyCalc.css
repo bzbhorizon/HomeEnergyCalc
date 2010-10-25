@@ -44,3 +44,7 @@ h1 {
 .gwt-ToggleButton {
 	text-align: center;
 }
+
+.pie {
+	background: rgba(255, 255, 255, 0);
+	}

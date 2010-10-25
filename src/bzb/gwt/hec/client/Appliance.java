@@ -200,5 +200,12 @@ public class Appliance {
 		return usesStandby;
 	}
 
+	public void reset () {
+		setHours(0);
+		setMinutes(0);
+		setQuantity(0);
+		setUses(0);
+		setConstant(false);
+	}
 	
 }

@@ -35,6 +35,7 @@ public class TimingDialog extends DialogBox {
 		final TextBox quantity = new TextBox();
 		if (this.home.getAppliance(appName).isMultiple()) {
 			hp.add(new HTML("Quantity:"));
+			quantity.setText("1");
 			hp.add(quantity);
 		}
 		
@@ -67,6 +68,7 @@ public class TimingDialog extends DialogBox {
 						TimingDialog.this.home.updateResults();
 					} else {
 						TimingDialog.this.source.setDown(false);
+						TimingDialog.this.home.updateResults();
 					}
 					TimingDialog.this.hide();
 				}

@@ -14,11 +14,11 @@ public class AppliancePanels extends TabPanel {
 	
 	private ToggleButton[][] buttons;
 	private FlowPanel[] panels;
-	private HomeEnergyCalc home;
+	private static HomeEnergyCalc home;
 	private TimingDialog td;
 	
 	public AppliancePanels (HomeEnergyCalc home) {
-		this.home = home;
+		AppliancePanels.home = home;
 		buttons = new ToggleButton[home.getCategories().length][];
 		panels = new FlowPanel[home.getCategories().length];
 		
@@ -32,17 +32,16 @@ public class AppliancePanels extends TabPanel {
 				buttons[i][j].addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						if (((ToggleButton) event.getSource()).isDown()) {
-							AppliancePanels.this.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setQuantity(1);
-							if (AppliancePanels.this.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).getUse() == Appliance.USE_CONSTANT) {
-								AppliancePanels.this.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setConstant(true);
-								AppliancePanels.this.home.updateResults();
+							AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setQuantity(1);
+							if (AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).getUse() == Appliance.USE_CONSTANT) {
+								AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setConstant(true);
+								AppliancePanels.home.updateResults();
 							} else {
-								td = new TimingDialog(AppliancePanels.this.home, (ToggleButton) event.getSource());
+								td = new TimingDialog(AppliancePanels.home, (ToggleButton) event.getSource());
 							}
 					    } else {
-					    	AppliancePanels.this.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setHours(0);
-					    	AppliancePanels.this.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setMinutes(0);
-					    	AppliancePanels.this.home.updateResults();
+					    	AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).reset();
+					    	AppliancePanels.home.updateResults();
 					    }
 					}
 				});
@@ -57,6 +56,15 @@ public class AppliancePanels extends TabPanel {
 	    
 	    setStyleName("appliancePanels");
 	    
+	}
+	
+	public void reset () {
+		for (int i = 0; i < buttons.length; i++) {
+			for (int j = 0; j < buttons[i].length; j++) {
+				buttons[i][j].setDown(false);
+				home.getAppliance(buttons[i][j].getUpFace().getText()).reset();
+			}
+		}
 	}
 
 }

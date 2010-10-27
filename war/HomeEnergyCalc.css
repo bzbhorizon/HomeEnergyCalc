@@ -1,50 +1,73 @@
 h1 {
   	font-size: 50pt;
-	font-family: arial black;
-	color: #bbbbbb;
-  	margin: 30px;
-  	text-align: center;
+	font-family: helvetica, arial;
+	color: black;
+  	margin: 30px 0px;
   	letter-spacing: -5px;
 }
 
-.app {
-	margin: 0px auto;
-}
-
-.container, .resultsPanel, .appliancePanels {
-	padding: 40px;
-}
-
-.app {
-	/*-moz-border-radius: 15px;
-	border-radius: 15px;
-	border: 5pt solid #3c7201;*/
-	-moz-box-shadow: 4px 4px 15px rgba(0,0,0,0.2); /* FF3.5+ */
-  	-webkit-box-shadow: 4px 4px 15px rgba(0,0,0,0.2); /* Saf3.0+, Chrome */
-    box-shadow: 4px 4px 15px rgba(0,0,0,0.2); /* Opera 10.5, IE 9 */
-
-	/* fallback (Opera) */
-    background: white;
-    /* Mozilla: */
-    background: -moz-linear-gradient(top, white, #eeeeee);
-    /* Chrome, Safari:*/
-    background: -webkit-gradient(linear,
-                left top, left bottom, from(white), to(#eeeeee));
-    /* MSIE */
-    filter: progid:DXImageTransform.Microsoft.Gradient(
-                StartColorStr='white', EndColorStr='#eeeeee', GradientType=0);
-}
-
-.container {
-  	font-size: 75pt;
-	font-family: arial black;
-	color: #3c7201;
-}
-
-.gwt-ToggleButton {
+.gwt-ToggleButton, .gwt-Button {
+	font-size: 8pt !important;
+	width: 100px;
+	height: 50px;
 	text-align: center;
+	margin: 5px !important;
+	background: white !important;
+	}
+	
+.gwt-ToggleButton {
+	float: left;
+	}
+
+.clearButton {
+	border: 1pt red solid !important;
+	color: red;
+	margin: 20px !important;
 }
 
-.pie {
-	background: rgba(255, 255, 255, 0);
+.results {
+	padding: 0px 20px;
+	font-size: 8pt;
 	}
+
+.gwt-TabBar {
+}
+
+.gwt-TabBar .gwt-TabBarFirst {
+ width: 0px !important;
+}
+
+.gwt-TabBar .gwt-TabBarRest {
+}
+
+.gwt-TabBar .gwt-TabBarItem {
+ margin-left: 1px !important;
+ padding: 2px 4px !important;
+ font-size: 8pt;
+ cursor: pointer;
+ cursor: hand;
+ color: white !important;
+ font-weight: normal !important;
+ text-align: center;
+ background: black !important;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected {
+ cursor: default;
+ background: #666666 !important;
+ font-weight: bold !important;
+}
+
+.gwt-TabBar .gwt-TabBarItem-disabled {
+ cursor: default;
+ color: #999999;
+}
+
+.gwt-TabPanel {
+}
+
+.gwt-TabPanelBottom {
+ border: 2pt black solid !important;
+ overflow: hidden;
+ padding: 6px;
+}

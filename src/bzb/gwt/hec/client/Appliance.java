@@ -5,27 +5,30 @@ public class Appliance {
 	public static final int USE_SINGLE = 0;
 	public static final int USE_TIMED = 1;
 	public static final int USE_CONSTANT = 2;
+	public static final int USE_DISTANCE = 3;
 	
 	private String name;
-	private int watts;
-	private int use;//per use or per hour
+	private int watts; //or g/km for travel
+	private int use;
 	private int category;
 	private int hours = 0;
 	private int minutes = 0;
 	private int uses = 0;
 	private boolean constant = false;
 	private boolean multiple;
-	private int quantity = 0;
+	private int quantity = 0; //or km for travel
 	private int standbyWatts;
 	private boolean usesStandby;
+	private String iconURL;
 	
-	public Appliance (String name, int watts, int use, int category, boolean multiple, int standbyWatts) {
+	public Appliance (String name, String iconURL, int watts, int use, int category, boolean multiple, int standbyWatts) {
 		setName(name);
 		setUse(use);
 		setWatts(watts);
 		setCategory(category);
 		setMultiple(multiple);
 		setStandbyWatts(standbyWatts);
+		setIconURL(iconURL);
 	}
 	
 	/**
@@ -206,6 +209,14 @@ public class Appliance {
 		setQuantity(0);
 		setUses(0);
 		setConstant(false);
+	}
+
+	public void setIconURL(String iconURL) {
+		this.iconURL = iconURL;
+	}
+
+	public String getIconURL() {
+		return iconURL;
 	}
 	
 }

@@ -22,21 +22,22 @@ public class ResultsPanel extends FlowPanel {
 	
 	private static final double KWH_EMISSIONS = 0.544; // 1kWh = 0.544kg CO2
 	private static final double KWH_COST = 0.1; // 1kWh = 10p
+	private static final double KM_PER_MILE = 1.609344;
 	
 	public ResultsPanel (Format format) {
 		ResultsPanel.setFormat(format);
 		
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
+				setWidth(Window.getClientWidth() * 0.35 + "px");
+				
 				options = Options.create();
-			    options.setWidth((int)(Window.getClientWidth() * 0.6));
-			    options.setHeight(400);
+			    options.setWidth((int)(Window.getClientWidth() * 0.35));
+			    options.setHeight(300);
 			    options.set3D(true);
 			    options.setTitle("Contribution");
 				
-				setWidth(Window.getClientWidth() * 0.6 + "px");
-				
-				setStyleName("resultsPanel");
+				setStyleName("results");
 				
 				results = new FlowPanel();
 				add(results);
@@ -103,17 +104,27 @@ public class ResultsPanel extends FlowPanel {
 						html += " (x" + app.getQuantity() + ")";
 					}
 					html += " = " + formatUnits(kwh) + "</p>";
+				} else if (app.getUse() == Appliance.USE_DISTANCE && app.getQuantity() > 0) {
+					double kwh = (double)app.getWatts() * KWH_EMISSIONS * app.getQuantity() / 1000 * KM_PER_MILE;
+					totalKwh += kwh;
+					catKwh += kwh;
+					html += "<p>" + app.getName();
+					if (app.getQuantity() > 1) {
+						html += " (x" + app.getQuantity() + " miles)";
+					}
+					html += " = " + formatUnits(kwh) + "</p>";
 				}
 			}
 			data.setValue(i, 0, home.getCategories()[i]);
 		    data.setValue(i, 1, toCorrectUnits(catKwh));
 		}
 		html += "<p>Total " + getUnitName() + " = " + formatUnits(totalKwh) + "</p>";
-		results.add(new HTML(html));
 		
 		PieChart pie = new PieChart(data, options);
 		pie.addStyleName("pie");
 		results.add(pie);
+		results.add(new HTML(html));
+		
 		add(results);
 	}
 	
@@ -145,7 +156,7 @@ public class ResultsPanel extends FlowPanel {
 		if (getFormat() == Format.COST) {
 			return "&pound;";
 		} else if (getFormat() == Format.EMISSIONS) {
-			return "kg CO2";
+			return "kg CO<sub>2</sub>";
 		} else if (getFormat() == Format.ENERGY) {
 			return "kWh";
 		} else {

@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -16,7 +17,7 @@ public class HomeEnergyCalc implements EntryPoint {
 	
 	private HashMap<String,Appliance> appliances = new HashMap<String,Appliance>();
 	private final String[] categories = new String[]{
-		"Kitchen","Laundry","Health/Personal Care","Lighting, Heating and Cooling","Home Entertainment","Office, PCs and Phones"
+		"Kitchen","Laundry","Health/Personal Care","Lighting, Heating and Cooling","Home Entertainment","Office, PCs and Phones","Travel"
 	};
 	
 	private ResultsPanel rp;
@@ -24,7 +25,7 @@ public class HomeEnergyCalc implements EntryPoint {
 	public HomeEnergyCalc () { //http://www.carbonfootprint.com/energyconsumption.html
 		// kitchen
 		appliances.put("Microwave", new Appliance("Microwave", 945, Appliance.USE_SINGLE, 0, false, 3));
-		appliances.put("Kettle", new Appliance("Kettle", 110, Appliance.USE_SINGLE, 0, false, 0));
+		appliances.put("Kettle", new Appliance("Kettle", "kettle.png", 110, Appliance.USE_SINGLE, 0, false, 0));
 		appliances.put("Oven (Gas)", new Appliance("Oven (Gas)", 1520, Appliance.USE_SINGLE, 0, false, 0));
 		appliances.put("Hob (Gas)", new Appliance("Hob (Gas)", 900, Appliance.USE_SINGLE, 0, false, 0));
 		appliances.put("Oven (Electric)", new Appliance("Oven (Electric)", 1560, Appliance.USE_SINGLE, 0, false, 0));
@@ -34,7 +35,7 @@ public class HomeEnergyCalc implements EntryPoint {
 		appliances.put("Fridge+freezer", new Appliance("Fridge+freezer", 800, Appliance.USE_CONSTANT, 0, false, 0));
 		appliances.put("Fridge", new Appliance("Fridge", 40, Appliance.USE_CONSTANT, 0, false, 0));
 		appliances.put("Toaster", new Appliance("Toaster", 158, Appliance.USE_SINGLE, 0, false, 0));
-		appliances.put("Blender/mixer", new Appliance("Blender/mixer", 6, Appliance.USE_SINGLE, 0, false, 0));
+		appliances.put("Blender/mixer", new Appliance("Blender/mixer", "blender.png", 6, Appliance.USE_SINGLE, 0, false, 0));
 		appliances.put("Coffee Machine", new Appliance("Coffee Machine", 100, Appliance.USE_SINGLE, 0, false, 0));
 		
 		// laundry
@@ -96,12 +97,42 @@ public class HomeEnergyCalc implements EntryPoint {
 		appliances.put("Printer", new Appliance("Printer", 14, Appliance.USE_TIMED, 5, true, 4));
 		appliances.put("Mobile phone (plugged in)", new Appliance("Mobile phone (plugged in)", 5, Appliance.USE_TIMED, 5, true, 0));
 		appliances.put("iPad (plugged in)", new Appliance("iPad (plugged in)", 10, Appliance.USE_TIMED, 5, true, 0));
-		appliances.put("Electric clock", new Appliance("Electric clock", 2, Appliance.USE_CONSTANT, 5, true, 0));
-		appliances.put("Cordless phone", new Appliance("Cordless phone", 2, Appliance.USE_CONSTANT, 5, true, 0));
+		appliances.put("Electric clock", new Appliance("Electric clock", "alarmClock.png", 2, Appliance.USE_CONSTANT, 5, true, 0));
+		appliances.put("Cordless phone", new Appliance("Cordless phone", "cordlessPhone.png", 2, Appliance.USE_CONSTANT, 5, true, 0));
+		
+		// travel based on 1kWh = 544g CO2
+		appliances.put("Bus", new Appliance("Bus", 134, Appliance.USE_DISTANCE, 6, true, 0));
+		appliances.put("Plane", new Appliance("Plane", 172, Appliance.USE_DISTANCE, 6, true, 0));
+		appliances.put("Coach", new Appliance("Coach", 30, Appliance.USE_DISTANCE, 6, true, 0));
+		appliances.put("Rail", new Appliance("Rail", 53, Appliance.USE_DISTANCE, 6, true, 0));
+		appliances.put("Car (<1.2l petrol; <1.4l diesel)", new Appliance("Car (<1.2l petrol; <1.4l diesel)", 150, Appliance.USE_DISTANCE, 6, true, 0));
+		appliances.put("Car (<1.5l petrol; <2.0l diesel)", new Appliance("Car (<1.5l petrol; <2.0l diesel)", 165, Appliance.USE_DISTANCE, 6, true, 0));
+		appliances.put("Car (<2.0l petrol; <2.2l diesel)", new Appliance("Car (<2.0l petrol; <2.2l diesel)", 185, Appliance.USE_DISTANCE, 6, true, 0));
+		appliances.put("Car (>2.0l petrol; >2.2l diesel)", new Appliance("Car (>2.0l petrol; >2.2l diesel)", 225, Appliance.USE_DISTANCE, 6, true, 0));
 	}
 
 	public void onModuleLoad() {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setStyleName("horApp");
+		
+		VerticalPanel vp = new VerticalPanel();
+		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
 		final AppliancePanels ap = new AppliancePanels(this);
+		vp.add(ap);
+		Button reset = new Button("Clear all");
+		reset.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				ap.reset();
+				rp.reset();
+			}
+			
+		});
+		reset.addStyleName("clearButton");
+		vp.add(reset);
+		
+		hp.add(vp);
 		
 		String type = Window.Location.getParameter("type");
 		if (type != null) {
@@ -116,22 +147,9 @@ public class HomeEnergyCalc implements EntryPoint {
 			rp = new ResultsPanel(ResultsPanel.Format.COST);
 		}
 		
-		VerticalPanel vp = new VerticalPanel();
-		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		vp.setStyleName("app");
-		vp.add(ap);
-		Button reset = new Button("Clear all");
-		reset.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				ap.reset();
-				rp.reset();
-			}
-			
-		});
-		vp.add(reset);
-		vp.add(rp);
-		RootPanel.get("app").add(vp);
+		hp.add(rp);
+		RootPanel.get("app").add(hp);
+		
 	}
 	
 	public ArrayList<Appliance> getAppliancesInCategory (int category) {

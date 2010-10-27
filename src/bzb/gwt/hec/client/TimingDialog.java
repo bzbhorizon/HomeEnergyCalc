@@ -34,9 +34,16 @@ public class TimingDialog extends DialogBox {
 		
 		final TextBox quantity = new TextBox();
 		if (this.home.getAppliance(appName).isMultiple()) {
-			hp.add(new HTML("Quantity:"));
+			if (this.home.getAppliance(appName).getUse() == Appliance.USE_DISTANCE) {
+				hp.add(new HTML("Distance:"));
+			} else {
+				hp.add(new HTML("Quantity:"));
+			}
 			quantity.setText("1");
 			hp.add(quantity);
+			if (this.home.getAppliance(appName).getUse() == Appliance.USE_DISTANCE) {
+				hp.add(new HTML("miles"));
+			}
 		}
 		
 		final CheckBox usesStandby = new CheckBox();
@@ -102,6 +109,22 @@ public class TimingDialog extends DialogBox {
 						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setHours(hours.getSelectedIndex());
 						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setMinutes(minutes.getSelectedIndex());
 						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setUsesStandby(usesStandby.getValue());
+						TimingDialog.this.home.updateResults();
+					} else {
+						TimingDialog.this.source.setDown(false);
+					}
+					TimingDialog.this.hide();
+				}
+			});
+		} else if (this.home.getAppliance(appName).getUse() == Appliance.USE_DISTANCE) {
+			doneButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					try {
+						TimingDialog.this.home.getAppliance(TimingDialog.this.appName).setQuantity(Integer.parseInt(quantity.getValue()));
+					} catch (Exception e) {
+						
+					}
+					if (TimingDialog.this.home.getAppliance(TimingDialog.this.appName).getQuantity() > 0) {
 						TimingDialog.this.home.updateResults();
 					} else {
 						TimingDialog.this.source.setDown(false);

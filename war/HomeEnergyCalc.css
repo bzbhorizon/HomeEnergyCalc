@@ -7,9 +7,8 @@ h1 {
 }
 
 .gwt-ToggleButton, .gwt-Button {
-	font-size: 8pt !important;
+	font-size: 7pt !important;
 	width: 100px;
-	height: 50px;
 	text-align: center;
 	margin: 5px !important;
 	background: white !important;
@@ -19,10 +18,19 @@ h1 {
 	float: left;
 	}
 
+.applianceButton {
+	height: 150px;
+}
+
+.gwt-ToggleButton-down {
+	border: 1pt dashed green !important;
+}
+
 .clearButton {
 	border: 1pt red solid !important;
 	color: red;
 	margin: 20px !important;
+	font-size: 8pt !important;
 }
 
 .results {
@@ -71,3 +79,7 @@ h1 {
  overflow: hidden;
  padding: 6px;
 }
+
+img {
+	padding: 10px 0px;
+	}

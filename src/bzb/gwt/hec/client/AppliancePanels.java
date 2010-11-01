@@ -27,23 +27,7 @@ public class AppliancePanels extends TabPanel {
 			buttons[i] = new ToggleButton[thisApps.size()];
 			int j = 0;
 			for (Appliance app : home.getAppliancesInCategory(i)) {
-				buttons[i][j] = new ToggleButton(app.getName(), app.getName() + " (click to remove)");
-				buttons[i][j].addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						if (((ToggleButton) event.getSource()).isDown()) {
-							AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setQuantity(1);
-							if (AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).getUse() == Appliance.USE_CONSTANT) {
-								AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).setConstant(true);
-								AppliancePanels.home.updateResults();
-							} else {
-								td = new TimingDialog(AppliancePanels.home, (ToggleButton) event.getSource());
-							}
-					    } else {
-					    	AppliancePanels.home.getAppliance(((ToggleButton) event.getSource()).getUpFace().getText()).reset();
-					    	AppliancePanels.home.updateResults();
-					    }
-					}
-				});
+				buttons[i][j] = new ApplianceButton(app);
 				panels[i].add(buttons[i][j++]);
 			}
 			add(panels[i], home.getCategories()[i]);
@@ -64,6 +48,68 @@ public class AppliancePanels extends TabPanel {
 				home.getAppliance(buttons[i][j].getUpFace().getText()).reset();
 			}
 		}
+	}
+	
+	public void setTd(TimingDialog td) {
+		this.td = td;
+	}
+
+	public TimingDialog getTd() {
+		return td;
+	}
+
+	class ApplianceButton extends ToggleButton {
+		
+		private Appliance app;
+		
+		public ApplianceButton (Appliance app) {
+			addStyleName("applianceButton");
+			setApp(app);
+			setHTML(getUpFaceHTML());			
+			addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					if (isDown()) {
+						setHTML(getDownFaceHTML());
+						getApp().setQuantity(1);
+						if (getApp().getUse() == Appliance.USE_CONSTANT) {
+							getApp().setConstant(true);
+							AppliancePanels.home.updateResults();
+						} else {
+							setTd(new TimingDialog(AppliancePanels.home, ApplianceButton.this));
+						}
+				    } else {
+				    	setHTML(getUpFaceHTML());
+				    	getApp().reset();
+				    	AppliancePanels.home.updateResults();
+				    }
+				}
+			});
+		}
+
+		public void setApp(Appliance app) {
+			this.app = app;
+		}
+
+		public Appliance getApp() {
+			return app;
+		}
+		
+		private String getUpFaceHTML () {
+			if (getApp().getIconURL() != null) {
+				return app.getName() + "<br /><img src='" + app.getIconURL() + "' />";
+			} else {
+				return app.getName();
+			}
+		}
+		
+		private String getDownFaceHTML () {
+			if (getApp().getIconURL() != null) {
+				return app.getName() + " (click to remove)<br /><img src='" + app.getIconURL() + "' />";
+			} else {
+				return app.getName() + " (click to remove)";
+			}
+		}
+		
 	}
 
 }

@@ -4,24 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class HomeEnergyCalc implements EntryPoint {
 	
-	private HashMap<String,Appliance> appliances = new HashMap<String,Appliance>();
-	private final String[] categories = new String[]{
+	private static HashMap<String,Appliance> appliances = new HashMap<String,Appliance>();
+	private static final String[] categories = new String[]{
 		"Kitchen","Laundry","Health/Personal Care","Lighting, Heating and Cooling","Home Entertainment","Office, PCs and Phones","Travel"
 	};
 	
-	private ResultsPanel rp;
+	public enum State { BRIEF, WORKING, RESULTS };
+	private static State state = State.BRIEF;
 	
+	private static WorkingPanel wp;
+	private static BriefPanel bp;
+
 	public HomeEnergyCalc () { //http://www.carbonfootprint.com/energyconsumption.html
 		// kitchen
 		appliances.put("Microwave", new Appliance("Microwave", "microwave.png", 945, Appliance.USE_SINGLE, 0, false, 3));
@@ -111,44 +108,19 @@ public class HomeEnergyCalc implements EntryPoint {
 	}
 
 	public void onModuleLoad() {
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.setStyleName("horApp");
 		
-		VerticalPanel vp = new VerticalPanel();
-		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		
-		final AppliancePanels ap = new AppliancePanels(this);
-		vp.add(ap);
-		Button reset = new Button("Clear all");
-		reset.addClickHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				ap.reset();
-				rp.reset();
+		
+	}
+	
+	public void updateRootPanel () {
+		if (state == State.BRIEF) {
+			if (wp == null) {
+				wp = new WorkingPanel(this);
 			}
-			
-		});
-		reset.addStyleName("clearButton");
-		vp.add(reset);
-		
-		hp.add(vp);
-		
-		String type = Window.Location.getParameter("type");
-		if (type != null) {
-			if (type.equals("emissions")) {
-				rp = new ResultsPanel(ResultsPanel.Format.EMISSIONS);
-			} else if (type.equals("energy")) {
-				rp = new ResultsPanel(ResultsPanel.Format.ENERGY);
-			} else {
-				rp = new ResultsPanel(ResultsPanel.Format.COST);
-			}
-		} else {
-			rp = new ResultsPanel(ResultsPanel.Format.COST);
+			RootPanel.get("app").clear();
+			RootPanel.get("app").add(wp);
 		}
-		
-		hp.add(rp);
-		RootPanel.get("app").add(hp);
-		
 	}
 	
 	public ArrayList<Appliance> getAppliancesInCategory (int category) {
@@ -169,11 +141,15 @@ public class HomeEnergyCalc implements EntryPoint {
 		return appliances.get(appName);
 	}
 	
-	public void updateResults () {
-		rp.updateResults(this);
-	}
-	
 	public HashMap<String, Appliance> getAppliances () {
 		return appliances;
+	}
+
+	public static void setState(State state) {
+		HomeEnergyCalc.state = state;
+	}
+
+	public static State getState() {
+		return state;
 	}
 }

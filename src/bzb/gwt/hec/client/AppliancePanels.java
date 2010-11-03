@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.ToggleButton;
 
 public class AppliancePanels extends TabPanel {
 	
-	private ToggleButton[][] buttons;
-	private FlowPanel[] panels;
+	private static ToggleButton[][] buttons;
+	private static FlowPanel[] panels;
 	private static HomeEnergyCalc home;
-	private TimingDialog td;
+	private static TimingDialog td;
 	
 	public AppliancePanels (HomeEnergyCalc home) {
 		AppliancePanels.home = home;
@@ -51,7 +51,7 @@ public class AppliancePanels extends TabPanel {
 	}
 	
 	public void setTd(TimingDialog td) {
-		this.td = td;
+		AppliancePanels.td = td;
 	}
 
 	public TimingDialog getTd() {
@@ -73,14 +73,14 @@ public class AppliancePanels extends TabPanel {
 						getApp().setQuantity(1);
 						if (getApp().getUse() == Appliance.USE_CONSTANT) {
 							getApp().setConstant(true);
-							AppliancePanels.home.updateResults();
+							WorkingPanel.updateResults();
 						} else {
 							setTd(new TimingDialog(AppliancePanels.home, ApplianceButton.this));
 						}
 				    } else {
 				    	setHTML(getUpFaceHTML());
 				    	getApp().reset();
-				    	AppliancePanels.home.updateResults();
+				    	WorkingPanel.updateResults();
 				    }
 				}
 			});

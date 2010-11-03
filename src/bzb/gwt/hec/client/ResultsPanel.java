@@ -14,8 +14,8 @@ import com.google.gwt.visualization.client.visualizations.PieChart.Options;
 
 public class ResultsPanel extends FlowPanel {
 	
-	private Options options;
-	private FlowPanel results;
+	private static Options options;
+	private static FlowPanel results;
 	
 	public enum Format { COST, EMISSIONS, ENERGY };
 	private static Format format = Format.ENERGY;

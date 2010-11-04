@@ -3,19 +3,25 @@ package bzb.gwt.hec.client;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import bzb.gwt.hec.client.HomeEnergyCalc.State;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.PieChart;
 import com.google.gwt.visualization.client.visualizations.PieChart.Options;
 
-public class ResultsPanel extends FlowPanel {
+public class ResultsPanel extends VerticalPanel {
 	
 	private static Options options;
-	private static FlowPanel results;
+	private static VerticalPanel results;
 	
 	public enum Format { COST, EMISSIONS, ENERGY };
 	private static Format format = Format.ENERGY;
@@ -24,6 +30,17 @@ public class ResultsPanel extends FlowPanel {
 	private static final double KWH_COST = 0.1; // 1kWh = 10p
 	private static final double KM_PER_MILE = 1.609344;
 	
+	private static double totalKwh = 0.0;
+	private static double targetKwh = 0.0;
+	
+	public static double getTotalKwh() {
+		return totalKwh;
+	}
+
+	public static void setTotalKwh(double totalKwh) {
+		ResultsPanel.totalKwh = totalKwh;
+	}
+
 	public ResultsPanel (Format format) {
 		ResultsPanel.setFormat(format);
 		
@@ -39,22 +56,26 @@ public class ResultsPanel extends FlowPanel {
 				
 				setStyleName("results");
 				
-				results = new FlowPanel();
+				results = new VerticalPanel();
 				add(results);
 			}
 		};
 		VisualizationUtils.loadVisualizationApi(onLoadCallback, PieChart.PACKAGE);
+		
+		setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	}
 
-	public void updateResults (HomeEnergyCalc home) {
-		remove(results);
-		results = new FlowPanel();
+	public void updateResults (final HomeEnergyCalc home) {
+		clear();
+		results = new VerticalPanel();
+		results.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		String html = "";
+		String totalHtml = "";
 		DataTable data = DataTable.create();
 	    data.addColumn(ColumnType.STRING, getUnitName());
 	    data.addColumn(ColumnType.NUMBER, getUnits());
 	    data.addRows(home.getCategories().length);
-		double totalKwh = 0;
+		totalKwh = 0;
 		for (int i = 0; i < home.getCategories().length; i++) {
 			ArrayList<Appliance> apps = home.getAppliancesInCategory(i);
 			Iterator<Appliance> appI = apps.iterator();
@@ -118,14 +139,30 @@ public class ResultsPanel extends FlowPanel {
 			data.setValue(i, 0, home.getCategories()[i]);
 		    data.setValue(i, 1, toCorrectUnits(catKwh));
 		}
-		html += "<p>Total " + getUnitName() + " = " + formatUnits(totalKwh) + "</p>";
+		String totalStyle;
+		if (totalKwh > targetKwh) {
+			totalStyle = "red";
+		} else {
+			totalStyle = "green";
+		}
+		totalHtml += "<p style='color:" + totalStyle + ";'>Total " + getUnitName() + " = " + formatUnits(totalKwh) + "; Target = " + formatUnits(targetKwh) + "</p>";
 		
 		PieChart pie = new PieChart(data, options);
 		pie.addStyleName("pie");
+		results.add(new HTML(totalHtml));
 		results.add(pie);
 		results.add(new HTML(html));
 		
 		add(results);
+		
+		Button submit = new Button("Submit");
+		submit.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				home.updateRootPanel(State.REFLECTION);
+			}
+		});
+		submit.addStyleName("submitButton");
+		add(submit);
 	}
 	
 	public void reset () {
@@ -194,6 +231,14 @@ public class ResultsPanel extends FlowPanel {
 		} else {
 			return null;
 		}
+	}
+
+	public static void setTargetKwh(double targetKwh) {
+		ResultsPanel.targetKwh = targetKwh;
+	}
+
+	public static double getTargetKwh() {
+		return targetKwh;
 	}
 	
 }

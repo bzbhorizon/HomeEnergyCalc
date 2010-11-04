@@ -25,6 +25,8 @@ public class TimingDialog extends DialogBox {
 		TimingDialog.source = source;
 		TimingDialog.appName = source.getUpFace().getText();
 		
+		setGlassEnabled(true);
+		
 		VerticalPanel content = new VerticalPanel();
 		content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		

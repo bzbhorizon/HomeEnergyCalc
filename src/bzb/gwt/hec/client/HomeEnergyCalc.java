@@ -13,11 +13,12 @@ public class HomeEnergyCalc implements EntryPoint {
 		"Kitchen","Laundry","Health/Personal Care","Lighting, Heating and Cooling","Home Entertainment","Office, PCs and Phones","Travel"
 	};
 	
-	public enum State { BRIEF, WORKING, RESULTS };
-	private static State state = State.BRIEF;
+	public enum State { WORKING, REFLECTION };
+	private static State state = State.WORKING;
 	
 	private static WorkingPanel wp;
 	private static BriefPanel bp;
+	private static ReflectionPanel rp;
 
 	public HomeEnergyCalc () { //http://www.carbonfootprint.com/energyconsumption.html
 		// kitchen
@@ -109,17 +110,29 @@ public class HomeEnergyCalc implements EntryPoint {
 
 	public void onModuleLoad() {
 		
+		updateRootPanel(State.WORKING);
 		
+		showBrief();
 		
 	}
 	
-	public void updateRootPanel () {
-		if (state == State.BRIEF) {
+	public void updateRootPanel (State newState) {
+		if (newState != null) {
+			setState(newState);
+		}
+		if (state == State.WORKING) {
 			if (wp == null) {
 				wp = new WorkingPanel(this);
 			}
 			RootPanel.get("app").clear();
 			RootPanel.get("app").add(wp);
+		} else if (state == State.REFLECTION) {
+			if (rp == null) {
+				rp = new ReflectionPanel(this);
+			}
+			rp.update();
+			RootPanel.get("app").clear();
+			RootPanel.get("app").add(rp);
 		}
 	}
 	
@@ -151,5 +164,16 @@ public class HomeEnergyCalc implements EntryPoint {
 
 	public static State getState() {
 		return state;
+	}
+	
+	public void showBrief () {
+		if (bp == null) {
+			bp = new BriefPanel();
+		}
+		bp.show();
+	}
+	
+	public static void hideBrief () {
+		bp.hide();
 	}
 }

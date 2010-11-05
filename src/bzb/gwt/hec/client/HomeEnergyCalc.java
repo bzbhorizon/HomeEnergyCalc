@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class HomeEnergyCalc implements EntryPoint {
@@ -133,6 +134,9 @@ public class HomeEnergyCalc implements EntryPoint {
 			rp.update();
 			RootPanel.get("app").clear();
 			RootPanel.get("app").add(rp);
+		}
+		if (Window.Location.getParameter("type") != null) {
+			RootPanel.get("body").addStyleName(Window.Location.getParameter("type"));
 		}
 	}
 	

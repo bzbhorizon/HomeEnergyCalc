@@ -14,9 +14,11 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.ColumnChart;
+import com.google.gwt.visualization.client.visualizations.ColumnChart.Options;
 import com.google.gwt.visualization.client.visualizations.PieChart;
-import com.google.gwt.visualization.client.visualizations.PieChart.Options;
 
 public class ResultsPanel extends VerticalPanel {
 	
@@ -46,15 +48,23 @@ public class ResultsPanel extends VerticalPanel {
 		
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
-				setWidth(Window.getClientWidth() * 0.35 + "px");
+				setWidth(Window.getClientWidth() * 0.48 + "px");
 				
 				options = Options.create();
-			    options.setWidth((int)(Window.getClientWidth() * 0.35));
+			    options.setWidth((int)(Window.getClientWidth() * 0.28));
 			    options.setHeight(300);
-			    options.set3D(true);
-			    options.setTitle("Contribution");
+			    options.set3D(false);
+			    //options.setTitle("Results");
+			    options.setStacked(false);
+			    options.setAxisFontSize(8.0);
+			    options.setLegend(LegendPosition.NONE);
+			    options.setBackgroundColor("#919892");
+			    //options.setAxisColor("black");
+			    //options.setShowCategories(false);
+			    //options.setTitleX("Categories");
+			    options.setTitleY(getUnitName());
 				
-				setStyleName("results");
+				setStyleName("meter");
 				
 				results = new VerticalPanel();
 				add(results);
@@ -63,6 +73,8 @@ public class ResultsPanel extends VerticalPanel {
 		VisualizationUtils.loadVisualizationApi(onLoadCallback, PieChart.PACKAGE);
 		
 		setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		setStyleName("results");
 	}
 
 	public void updateResults (final HomeEnergyCalc home) {
@@ -147,12 +159,14 @@ public class ResultsPanel extends VerticalPanel {
 		}
 		totalHtml += "<p style='color:" + totalStyle + ";'>Total " + getUnitName() + " = " + formatUnits(totalKwh) + "; Target = " + formatUnits(targetKwh) + "</p>";
 		
-		PieChart pie = new PieChart(data, options);
-		pie.addStyleName("pie");
-		results.add(new HTML(totalHtml));
-		results.add(pie);
-		results.add(new HTML(html));
+		//PieChart pie = new PieChart(data, options);
+		//pie.addStyleName("pie");
+		ColumnChart col = new ColumnChart(data, options);
 		
+		results.add(new HTML(totalHtml));
+		//results.add(pie);
+		results.add(col);
+		results.add(new HTML(html));
 		add(results);
 		
 		Button submit = new Button("Submit");
@@ -163,6 +177,8 @@ public class ResultsPanel extends VerticalPanel {
 		});
 		submit.addStyleName("submitButton");
 		add(submit);
+		
+		
 	}
 	
 	public void reset () {

@@ -43,6 +43,12 @@ h1 {
 	font-size: 8pt;
 	}
 
+.meter {
+	background: url(hand.png) no-repeat left top;
+	padding: 80px 0px 100px 100px;
+	overflow: hidden;
+	}
+
 .gwt-TabBar {
 }
 
@@ -87,4 +93,16 @@ h1 {
 
 img {
 	padding: 10px 0px;
+	}
+
+.emissions {
+
+	}
+	
+.energy {
+
+	}
+	
+.cost {
+
 	}

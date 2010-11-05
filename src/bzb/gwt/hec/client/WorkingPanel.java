@@ -6,6 +6,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class WorkingPanel extends HorizontalPanel {
@@ -50,6 +51,7 @@ public class WorkingPanel extends HorizontalPanel {
 			}
 		} else {
 			rp = new ResultsPanel(ResultsPanel.Format.COST);
+			
 		}
 		
 		add(rp);

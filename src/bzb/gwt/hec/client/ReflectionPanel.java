@@ -7,9 +7,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.smartgwt.client.widgets.Slider;
-import com.smartgwt.client.widgets.events.ValueChangedEvent;
-import com.smartgwt.client.widgets.events.ValueChangedHandler;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ReflectionPanel extends FlowPanel {
 	
@@ -27,22 +28,52 @@ public class ReflectionPanel extends FlowPanel {
 	public void update () {
 		clear();
 		add(new HTML("Current total = " + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh())));
-		newTotal = ResultsPanel.getTotalKwh();
+		newTotal = ResultsPanel.getTotalKwh() * 0.75;
 		newTotalHTML = new HTML("Target = " + ResultsPanel.formatUnits(newTotal));
-		add(newTotalHTML);
 		
-		Slider s = new Slider("New target");
-		s.setMaxValue(100);
-		s.setMinValue(0);
-		s.setValue(100);
-		s.setNumValues(50);
-		s.addValueChangedHandler(new ValueChangedHandler() {
-			public void onValueChanged(ValueChangedEvent event) {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hp.add(newTotalHTML);
+		
+		VerticalPanel vp = new VerticalPanel();
+		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		Button up = new Button("Raise");
+		up.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if ((newTotal + ResultsPanel.getTotalKwh() * 0.05) <= ResultsPanel.getTotalKwh()) {
+					newTotal += ResultsPanel.getTotalKwh() * 0.05;
+					newTotalHTML.setHTML("Target = " + ResultsPanel.formatUnits(newTotal));
+				}
+			}
+		});
+		vp.add(up);
+		Button down = new Button("Lower");
+		down.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if ((newTotal - ResultsPanel.getTotalKwh() * 0.05) >= 0) {
+					newTotal -= ResultsPanel.getTotalKwh() * 0.05;
+					newTotalHTML.setHTML("Target = " + ResultsPanel.formatUnits(newTotal));
+				}
+			}
+		});
+		vp.add(down);
+		hp.add(vp);
+		add(hp);
+		/*SliderBar s = new SliderBar(0, 100);
+		s.setCurrentValue(100);
+		s.setNumLabels(20);
+		s.setNumTicks(20);
+		s.setStepSize(2);
+		s.setWidth("100px");
+		s.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			public void onValueChange(ValueChangeEvent<Double> event) {
 				newTotal = event.getValue() / 100.0 * ResultsPanel.getTotalKwh();
 				newTotalHTML.setHTML("Target = " + ResultsPanel.formatUnits(newTotal));
 			}
 		});
-		add(s);
+		add(s);*/
+		
+		
 		
 		add(new HTML("Some recommendations for changes?"));
 		

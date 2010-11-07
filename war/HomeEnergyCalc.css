@@ -44,9 +44,6 @@ h1 {
 	}
 
 .meter {
-	background: url(hand.png) no-repeat left top;
-	padding: 80px 0px 100px 100px;
-	overflow: hidden;
 	}
 
 .gwt-TabBar {
@@ -106,3 +103,4 @@ img {
 .cost {
 
 	}
+	

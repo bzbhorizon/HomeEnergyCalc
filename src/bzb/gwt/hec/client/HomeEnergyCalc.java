@@ -20,6 +20,9 @@ public class HomeEnergyCalc implements EntryPoint {
 	private static WorkingPanel wp;
 	private static BriefPanel bp;
 	private static ReflectionPanel rp;
+	
+	public enum Format { COST, EMISSIONS, ENERGY };
+	private static Format format = Format.ENERGY;
 
 	public HomeEnergyCalc () { //http://www.carbonfootprint.com/energyconsumption.html
 		// kitchen
@@ -136,7 +139,8 @@ public class HomeEnergyCalc implements EntryPoint {
 			RootPanel.get("app").add(rp);
 		}
 		if (Window.Location.getParameter("type") != null) {
-			RootPanel.get("body").addStyleName(Window.Location.getParameter("type"));
+			setFormat(Format.valueOf(Window.Location.getParameter("type").toUpperCase()));
+			RootPanel.get("body").addStyleName(getFormat().name());
 		}
 	}
 	
@@ -174,10 +178,18 @@ public class HomeEnergyCalc implements EntryPoint {
 		if (bp == null) {
 			bp = new BriefPanel();
 		}
-		bp.show();
+		bp.center();
 	}
 	
 	public static void hideBrief () {
 		bp.hide();
+	}
+
+	public static void setFormat(Format format) {
+		HomeEnergyCalc.format = format;
+	}
+
+	public static Format getFormat() {
+		return format;
 	}
 }

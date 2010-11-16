@@ -2,11 +2,9 @@ package bzb.gwt.hec.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class WorkingPanel extends HorizontalPanel {
@@ -40,20 +38,7 @@ public class WorkingPanel extends HorizontalPanel {
 		
 		add(vp);
 		
-		String type = Window.Location.getParameter("type");
-		if (type != null) {
-			if (type.equals("emissions")) {
-				rp = new ResultsPanel(ResultsPanel.Format.EMISSIONS);
-			} else if (type.equals("energy")) {
-				rp = new ResultsPanel(ResultsPanel.Format.ENERGY);
-			} else {
-				rp = new ResultsPanel(ResultsPanel.Format.COST);
-			}
-		} else {
-			rp = new ResultsPanel(ResultsPanel.Format.COST);
-			
-		}
-		
+		rp = new ResultsPanel();
 		add(rp);
 	}
 

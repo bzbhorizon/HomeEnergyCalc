@@ -6,6 +6,11 @@ h1 {
   	letter-spacing: -5px;
 }
 
+.briefText {
+	text-align: left !important;
+	padding: 10px;
+}
+
 .gwt-ToggleButton, .gwt-Button {
 	font-size: 7pt !important;
 	width: 100px;

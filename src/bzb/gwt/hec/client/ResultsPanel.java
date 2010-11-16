@@ -3,6 +3,7 @@ package bzb.gwt.hec.client;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import bzb.gwt.hec.client.HomeEnergyCalc.Format;
 import bzb.gwt.hec.client.HomeEnergyCalc.State;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,9 +26,6 @@ public class ResultsPanel extends VerticalPanel {
 	private static Options options;
 	private static VerticalPanel results;
 	
-	public enum Format { COST, EMISSIONS, ENERGY };
-	private static Format format = Format.ENERGY;
-	
 	private static final double KWH_EMISSIONS = 0.544; // 1kWh = 0.544kg CO2
 	private static final double KWH_COST = 0.1; // 1kWh = 10p
 	private static final double KM_PER_MILE = 1.609344;
@@ -43,9 +41,7 @@ public class ResultsPanel extends VerticalPanel {
 		ResultsPanel.totalKwh = totalKwh;
 	}
 
-	public ResultsPanel (Format format) {
-		ResultsPanel.setFormat(format);
-		
+	public ResultsPanel () {
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				setWidth(Window.getClientWidth() * 0.48 + "px");
@@ -184,21 +180,13 @@ public class ResultsPanel extends VerticalPanel {
 	public void reset () {
 		remove(results);
 	}
-
-	public static void setFormat(Format format) {
-		ResultsPanel.format = format;
-	}
-
-	public static Format getFormat() {
-		return format;
-	}
 	
 	public static String getUnitName () {
-		if (getFormat() == Format.COST) {
+		if (HomeEnergyCalc.getFormat() == Format.COST) {
 			return "Cost";
-		} else if (getFormat() == Format.EMISSIONS) {
+		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
 			return "Emissions";
-		} else if (getFormat() == Format.ENERGY) {
+		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
 			return "Energy";
 		} else {
 			return null;
@@ -206,11 +194,11 @@ public class ResultsPanel extends VerticalPanel {
 	}
 	
 	public static String getUnits () {
-		if (getFormat() == Format.COST) {
+		if (HomeEnergyCalc.getFormat() == Format.COST) {
 			return "&pound;";
-		} else if (getFormat() == Format.EMISSIONS) {
+		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
 			return "kg CO<sub>2</sub>";
-		} else if (getFormat() == Format.ENERGY) {
+		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
 			return "kWh";
 		} else {
 			return null;
@@ -226,11 +214,11 @@ public class ResultsPanel extends VerticalPanel {
 	}
 	
 	public static double toCorrectUnits (double kWh) {
-		if (getFormat() == Format.COST) {
+		if (HomeEnergyCalc.getFormat() == Format.COST) {
 			return toCost(kWh);
-		} else if (getFormat() == Format.EMISSIONS) {
+		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
 			return toEmissions(kWh);
-		} else if (getFormat() == Format.ENERGY) {
+		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
 			return kWh;
 		} else {
 			return kWh;
@@ -238,11 +226,11 @@ public class ResultsPanel extends VerticalPanel {
 	}
 	
 	public static String formatUnits (double kWh) {
-		if (getFormat() == Format.COST) {
+		if (HomeEnergyCalc.getFormat() == Format.COST) {
 			return getUnits() + toCorrectUnits(kWh);
-		} else if (getFormat() == Format.EMISSIONS) {
+		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
 			return toCorrectUnits(kWh) + getUnits();
-		} else if (getFormat() == Format.ENERGY) {
+		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
 			return kWh + getUnits();
 		} else {
 			return null;

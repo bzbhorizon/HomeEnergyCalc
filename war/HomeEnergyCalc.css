@@ -2,8 +2,19 @@ h1 {
   	font-size: 50pt;
 	font-family: helvetica, arial;
 	color: black;
-  	margin: 30px 0px;
+  	margin: 20px 0px 0px 0px;
   	letter-spacing: -5px;
+}
+
+.appliancePanels {
+	margin-right: 40px;	
+}
+
+#sub {
+	margin: 0px 0px 15px 0px;
+	font-family: helvetica, arial;
+	font-size: 22pt;
+	letter-spacing: -1px;
 }
 
 .briefText {
@@ -13,34 +24,74 @@ h1 {
 
 .gwt-ToggleButton, .gwt-Button {
 	font-size: 7pt !important;
-	width: 100px;
 	text-align: center;
 	margin: 5px !important;
 	background: white !important;
 	}
+
+.gwt-Button {
+	padding: 10px !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+}
 	
 .gwt-ToggleButton {
 	float: left;
+	width: 100px;
 	}
 
 .applianceButton {
 	height: 150px;
 }
 
-.gwt-ToggleButton-down {
+.gwt-ToggleButton-down, .gwt-ToggleButton-up-hovering, .gwt-ToggleButton-down-hovering {
+	border: 4px dotted green !important;
+	margin: 2px !important;
+}
+
+#floating {
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	background: rgba(255, 255, 255, 0.95);
+	padding: 25px 25px 35px 35px;
+	-webkit-border-bottom-left-radius: 50px; -moz-border-bottom-left-radius: 50px;
+	-moz-box-shadow: 3px 3px 4px #666;
+	-webkit-box-shadow: 3px 3px 4px #666;
+	box-shadow: 3px 3px 4px #666;
+	/* For IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666')";
+	/* For IE 5.5 - 7 */
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666');
 }
 
 .clearButton {
-	border: 1pt red solid !important;
-	color: red;
-	margin: 20px !important;
-	font-size: 8pt !important;
+	color: white !important;
+	padding: 10px !important;
+	background: red !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+	border: none !important;
+	font-size: 15pt !important;
+	font-family: arial, helvetica;
+}
+
+.getResultsButton {
+	color: white !important;
+	padding: 10px !important;
+	background: green !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+	border: none !important;
+	font-size: 15pt !important;
+	font-family: arial, helvetica;
 }
 
 .submitButton {
 	border: 1pt black solid !important;
 	color: black;
 	font-size: 8pt !important;
+	margin: 20px !important;
 }
 
 .results {
@@ -48,7 +99,25 @@ h1 {
 	font-size: 8pt;
 	}
 
+.runningTarget {
+	color: white !important;
+	padding: 20px !important;
+	margin: 5px !important;
+	-webkit-border-radius: 10px !important;
+	-moz-border-radius: 10px !important;
+	border: none !important;
+	font-size: 15pt !important;
+	font-family: arial, helvetica;
+	
+}
+
 .meter {
+	background-image: url(monitor4.png);
+	background-repeat: no-repeat;
+	background-position: 0px 30px;
+	height: 634px;
+	margin: 0px 0px 0px 0px;
+	padding: 160px 0px 0px 0px;
 	}
 
 .gwt-TabBar {
@@ -93,6 +162,31 @@ h1 {
  padding: 6px;
 }
 
+.target {
+	font-size: 20pt;
+	font-weight: bold;
+}
+
+.targetPanel {
+	color: white;
+	padding: 20px;
+	background: black;
+	-webkit-border-radius: 10px !important;
+	-moz-border-radius: 10px !important;
+}
+
+.recalcButton {
+	color: white !important;
+	padding: 20px !important;
+	margin: 0px 0px 0px 10px !important;
+	background: green !important;
+	-webkit-border-radius: 10px !important;
+	-moz-border-radius: 10px !important;
+	border: none !important;
+	font-size: 20pt !important;
+	font-family: arial, helvetica;
+}
+
 img {
 	padding: 10px 0px;
 	}
@@ -109,3 +203,65 @@ img {
 
 	}
 	
+.gwt-DialogBox {
+	border: none !important;
+	background: rgba(255,255,255,0.95) !important;
+	padding: 20px !important;
+	margin: 30px !important;
+	-webkit-border-radius: 20px !important;
+	-moz-border-radius: 20px !important;
+	-moz-box-shadow: 3px 3px 4px #666;
+	-webkit-box-shadow: 3px 3px 4px #666;
+	box-shadow: 3px 3px 4px #666;
+	/* For IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666')";
+	/* For IE 5.5 - 7 */
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#666666');
+}
+
+.gwt-DialogBox .Caption {
+	color: black;
+	padding: 0px !important;
+	margin: 0px 0px 20px 0px !important;
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogContent {
+	padding: 0px !important;
+	margin: 0px !important;
+}
+.gwt-DialogBox .dialogMiddleCenter {
+	padding: 0px !important;
+	margin: 0px !important;
+	border: none !important;
+	background: transparent !important;
+}
+
+.gwt-DialogBox .dialogBottomCenter {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogMiddleLeft {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogMiddleRight {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogTopLeft {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogTopRight {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogBottomLeft {
+	border: none !important;
+	background: transparent !important;
+}
+.gwt-DialogBox .dialogBottomRight {
+	border: none !important;
+	background: transparent !important;
+}

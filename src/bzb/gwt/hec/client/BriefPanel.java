@@ -13,14 +13,20 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class BriefPanel extends DialogBox {
 	
+	private int page = 0;
+	private VerticalPanel vp;
+	private HTML text;
+	private HTML text2;
+	
 	public BriefPanel () {
 		
 		setGlassEnabled(true);
-		setText("Brief");
+		setHTML("<h1>Brief</h1>");
 		
-		VerticalPanel vp = new VerticalPanel();
+		vp = new VerticalPanel();
 		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		setWidth(Window.getClientWidth() * 0.75 + "px");
+		vp.setWidth("100%");
 		
 		String[] bits = null;
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
@@ -53,35 +59,56 @@ public class BriefPanel extends DialogBox {
 		}
 		
 		int i = 0;
-		HTML text = new HTML("<p>Hi!</p>" +
-				"<p>Thank you for logging in to the Home Energy Calculator.</p>" +
-				"<p>Do you want to know what your daily " + bits[i++] + "?</p>" +
+		
+		text = new HTML("<p>Hi!</p>" +
+				"<p>Thank you for logging in to the Home Energy Calculator. Do you want to know what your daily " + bits[i++] + "?</p>" +
 				"<p>With the Home Energy Calculator, you can:" +
 					"<ul><li>calculate how much " + bits[i++] + "</li>" + 
 					"<li>see how much " + bits[i++] + "</li>" +
 					"<li>compare how much " + bits[i++] + " each day</li>" +
 					"<li>see how you can cut your " + bits[i++] + "</li>" +
-					"<li>set yourself " + bits[i++] + " targets and see how you can reach them</li></ul>" +
-					"<p>The Home Energy Calculator is very easy to use. " +
+					"<li>set yourself " + bits[i++] + " targets and see how you can reach them</li></ul></p>");
+
+		text.setStyleName("briefText");
+		
+		text2 = new HTML("<p>The Home Energy Calculator is very easy to use. " +
 					"Just click on the appliances that you used yesterday and enter for how long (or how many times) you used them (NOTE: if yesterday was an unusual day for you then please think about the day before or a previous normal day for you). " +
 					"How much " + bits[i++] + " will appear on the right hand side of the screen.</p>" + 
-					"<p>When you finish, please press SUBMIT. " +
-					"You will then see the total amount of " + bits[i++] + " at home in one day, as well as how it is distributed among activities.</p>");
-		text.setStyleName("briefText");
-		vp.add(text);
-					
-		final Button start = new Button("Start");
-		start.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
-		start.addStyleName("submitButton");
-		vp.add(start);
+					"<p>When you finish, please press <span style='color: white; font-weight: bold; background: green; padding: 5px; -webkit-border-radius: 5px !important; -moz-border-radius: 5px !important;'>Calculate target</span></p>" +
+					"<p>You will then see the total amount of " + bits[i++] + " at home in one day, as well as how it is distributed among activities.</p>");
+		text2.setStyleName("briefText");
 		
 		setWidget(vp);
 		
 		center();
+		
+		updatePage();
+	}
+	
+	private void updatePage () {
+		vp.clear();
+		if (page == 0) {
+			vp.add(text);
+			final Button cont = new Button("Continue");
+			cont.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					page++;
+					updatePage();
+				}
+			});
+			cont.addStyleName("submitButton");
+			vp.add(cont);
+		} else if (page == 1) {
+			vp.add(text2);
+			final Button start = new Button("Start");
+			start.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					hide();
+				}
+			});
+			start.addStyleName("submitButton");
+			vp.add(start);
+		}
 	}
 	
 }

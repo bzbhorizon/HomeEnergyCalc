@@ -1,5 +1,6 @@
 package bzb.gwt.hec.client;
 
+import bzb.gwt.hec.client.HomeEnergyCalc.Format;
 import bzb.gwt.hec.client.HomeEnergyCalc.State;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -7,8 +8,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -18,6 +17,10 @@ public class ReflectionPanel extends FlowPanel {
 	
 	private static double newTotal;
 	private static HTML newTotalHTML;
+
+	private static Button back;
+
+	private static VerticalPanel vp;
 	
 	public ReflectionPanel(HomeEnergyCalc hec) {
 		setHec(hec);
@@ -25,16 +28,40 @@ public class ReflectionPanel extends FlowPanel {
 		update();
 	}
 	
+	public void onLoad() {
+		back.setHeight(vp.getOffsetHeight() + "px");
+	}
+	
 	public void update () {
 		clear();
-		add(new HTML("Current total = " + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh())));
-		newTotal = ResultsPanel.getTotalKwh() * 0.75;
-		newTotalHTML = new HTML("Target = " + ResultsPanel.formatUnits(newTotal));
+		add(new HTML("Your current total is " + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh()) +
+			"<h2>Summary</h2>" +
+			ResultsPanel.html));
 		
 		HorizontalPanel hp = new HorizontalPanel();
-		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		hp.add(newTotalHTML);
 		
+		vp = new VerticalPanel();
+		vp.setStyleName("targetPanel");
+		String message = "Try to reduce your ";
+		if (HomeEnergyCalc.getFormat() == Format.COST) {
+			message += " costs ";
+		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
+			message += " emissions ";
+		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
+			message += " energy use ";
+		}
+		message += " by 10%";
+		vp.add(new HTML(message));
+		
+		newTotal = ResultsPanel.getTotalKwh() * 0.90;
+		newTotalHTML = new HTML("Your target is " + ResultsPanel.formatUnits(newTotal));
+		newTotalHTML.setStyleName("target");
+		
+		//HorizontalPanel hp = new HorizontalPanel();
+		//hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		vp.add(newTotalHTML);
+		hp.add(vp);
+		/*
 		VerticalPanel vp = new VerticalPanel();
 		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		Button up = new Button("Raise");
@@ -57,36 +84,23 @@ public class ReflectionPanel extends FlowPanel {
 			}
 		});
 		vp.add(down);
-		hp.add(vp);
-		add(hp);
-		/*SliderBar s = new SliderBar(0, 100);
-		s.setCurrentValue(100);
-		s.setNumLabels(20);
-		s.setNumTicks(20);
-		s.setStepSize(2);
-		s.setWidth("100px");
-		s.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				newTotal = event.getValue() / 100.0 * ResultsPanel.getTotalKwh();
-				newTotalHTML.setHTML("Target = " + ResultsPanel.formatUnits(newTotal));
-			}
-		});
-		add(s);*/
+		hp.add(vp);*/
+		//add(hp);
 		
-		
-		
-		add(new HTML("Some recommendations for changes?"));
-		
-		Button back = new Button("Back");
+		back = new Button("Click to start reducing");
 		back.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				ResultsPanel.setTargetKwh(newTotal);
 				WorkingPanel.updateResults();
 				getHec().updateRootPanel(State.WORKING);
+				WorkingPanel.reset.setVisible(true);
+				WorkingPanel.submit.setVisible(true);
 			}
 		});
-		back.addStyleName("submitButton");
-		add(back);
+		back.addStyleName("recalcButton");
+		hp.add(back);
+		
+		add(hp);
 	}
 
 	public static void setHec(HomeEnergyCalc hec) {

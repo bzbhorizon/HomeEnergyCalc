@@ -11,20 +11,20 @@ import com.google.gwt.user.client.ui.ToggleButton;
 
 public class AppliancePanels extends TabPanel {
 	
-	private static ToggleButton[][] buttons;
+	private static ApplianceButton[][] buttons;
 	private static FlowPanel[] panels;
 	private static HomeEnergyCalc home;
 	private static TimingDialog td;
 	
 	public AppliancePanels (HomeEnergyCalc home) {
 		AppliancePanels.home = home;
-		buttons = new ToggleButton[home.getCategories().length][];
+		buttons = new ApplianceButton[home.getCategories().length][];
 		panels = new FlowPanel[home.getCategories().length];
 		
 		for (int i = 0; i < panels.length; i++) {
 			panels[i] = new FlowPanel();
 			ArrayList<Appliance> thisApps = home.getAppliancesInCategory(i);
-			buttons[i] = new ToggleButton[thisApps.size()];
+			buttons[i] = new ApplianceButton[thisApps.size()];
 			int j = 0;
 			for (Appliance app : home.getAppliancesInCategory(i)) {
 				buttons[i][j] = new ApplianceButton(app);
@@ -69,10 +69,11 @@ public class AppliancePanels extends TabPanel {
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if (isDown()) {
-						setHTML(getDownFaceHTML());
+						//setHTML(getDownFaceHTML());
 						getApp().setQuantity(1);
 						if (getApp().getUse() == Appliance.USE_CONSTANT) {
 							getApp().setConstant(true);
+							ResultsPanel.order.add(getApp().getName());
 							WorkingPanel.updateResults();
 						} else {
 							setTd(new TimingDialog(AppliancePanels.home, ApplianceButton.this));
@@ -80,6 +81,7 @@ public class AppliancePanels extends TabPanel {
 				    } else {
 				    	setHTML(getUpFaceHTML());
 				    	getApp().reset();
+				    	ResultsPanel.order.remove(getApp().getName());
 				    	WorkingPanel.updateResults();
 				    }
 				}

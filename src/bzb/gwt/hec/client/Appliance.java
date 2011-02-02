@@ -6,6 +6,8 @@ public class Appliance {
 	public static final int USE_TIMED = 1;
 	public static final int USE_CONSTANT = 2;
 	public static final int USE_DISTANCE = 3;
+	public static final int USE_TEMPS = 4;
+	public static final int USE_PROPS = 5;
 	
 	private String name;
 	private int watts; //or g/km for travel
@@ -20,6 +22,8 @@ public class Appliance {
 	private int standbyWatts;
 	private boolean usesStandby;
 	private String iconURL;
+	private int temps = 100;
+	private int props = 100;
 	
 	public Appliance (String name, String iconURL, int watts, int use, int category, boolean multiple, int standbyWatts) {
 		setName(name);
@@ -217,6 +221,22 @@ public class Appliance {
 
 	public String getIconURL() {
 		return iconURL;
+	}
+
+	public void setTemps(int temps) {
+		this.temps = temps;
+	}
+
+	public int getTemps() {
+		return temps;
+	}
+
+	public void setProps(int props) {
+		this.props = props;
+	}
+
+	public double getProps() {
+		return props;
 	}
 	
 }

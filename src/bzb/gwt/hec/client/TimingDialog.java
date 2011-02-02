@@ -74,9 +74,11 @@ public class TimingDialog extends DialogBox {
 						}
 						TimingDialog.home.getAppliance(TimingDialog.appName).setUses(uses.getSelectedIndex());
 						TimingDialog.home.getAppliance(TimingDialog.appName).setUsesStandby(usesStandby.getValue());
+						ResultsPanel.order.add(TimingDialog.appName);
 						WorkingPanel.updateResults();
 					} else {
 						TimingDialog.source.setDown(false);
+						ResultsPanel.order.remove(TimingDialog.appName);
 						WorkingPanel.updateResults();
 					}
 					TimingDialog.this.hide();
@@ -111,9 +113,12 @@ public class TimingDialog extends DialogBox {
 						TimingDialog.home.getAppliance(TimingDialog.appName).setHours(hours.getSelectedIndex());
 						TimingDialog.home.getAppliance(TimingDialog.appName).setMinutes(minutes.getSelectedIndex());
 						TimingDialog.home.getAppliance(TimingDialog.appName).setUsesStandby(usesStandby.getValue());
+						ResultsPanel.order.add(TimingDialog.appName);
 						WorkingPanel.updateResults();
 					} else {
 						TimingDialog.source.setDown(false);
+						ResultsPanel.order.remove(TimingDialog.appName);
+						WorkingPanel.updateResults();
 					}
 					TimingDialog.this.hide();
 				}
@@ -127,19 +132,107 @@ public class TimingDialog extends DialogBox {
 						
 					}
 					if (TimingDialog.home.getAppliance(TimingDialog.appName).getQuantity() > 0) {
+						ResultsPanel.order.add(TimingDialog.appName);
 						WorkingPanel.updateResults();
 					} else {
 						TimingDialog.source.setDown(false);
+						ResultsPanel.order.remove(TimingDialog.appName);
+						WorkingPanel.updateResults();
+					}
+					TimingDialog.this.hide();
+				}
+			});
+		} else if (TimingDialog.home.getAppliance(appName).getUse() == Appliance.USE_PROPS) {
+			final ListBox uses = new ListBox();
+			for (int i = 0; i <= 20; i++) {
+				uses.addItem(String.valueOf(i));
+			}
+			uses.setSelectedIndex(TimingDialog.home.getAppliance(appName).getUses());
+			hp.add(uses);
+			hp.add(new HTML("uses; "));
+			
+			hp.add(new HTML("proportion filled:"));
+			final ListBox props = new ListBox();
+			for (int i = 0; i <= 100; i += 25) {
+				props.addItem(String.valueOf(i));
+			}
+			props.setSelectedIndex((int) (TimingDialog.home.getAppliance(appName).getProps() / 25.0));
+			hp.add(props);
+			hp.add(new HTML("%"));
+			
+			doneButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					if (uses.getSelectedIndex() > 0) {
+						if (TimingDialog.home.getAppliance(TimingDialog.appName).isMultiple()) {
+							try {
+								TimingDialog.home.getAppliance(TimingDialog.appName).setQuantity(Integer.parseInt(quantity.getValue()));
+							} catch (Exception e) {
+								
+							}
+						} else {
+							TimingDialog.home.getAppliance(TimingDialog.appName).setQuantity(1);
+						}
+						TimingDialog.home.getAppliance(TimingDialog.appName).setProps(props.getSelectedIndex() * 25);
+						TimingDialog.home.getAppliance(TimingDialog.appName).setUses(uses.getSelectedIndex());
+						ResultsPanel.order.add(TimingDialog.appName);
+						WorkingPanel.updateResults();
+					} else {
+						TimingDialog.source.setDown(false);
+						ResultsPanel.order.remove(TimingDialog.appName);
+						WorkingPanel.updateResults();
+					}
+					TimingDialog.this.hide();
+				}
+			});
+		} else if (TimingDialog.home.getAppliance(appName).getUse() == Appliance.USE_TEMPS) {
+			final ListBox uses = new ListBox();
+			for (int i = 0; i <= 20; i++) {
+				uses.addItem(String.valueOf(i));
+			}
+			uses.setSelectedIndex(TimingDialog.home.getAppliance(appName).getUses());
+			hp.add(uses);
+			hp.add(new HTML("uses; "));
+			
+			hp.add(new HTML("temperature: approx."));
+			final ListBox props = new ListBox();
+			for (int i = 25; i <= 100; i += 25) {
+				props.addItem(String.valueOf(i));
+			}
+			props.setSelectedIndex((int) (TimingDialog.home.getAppliance(appName).getProps() / 25.0) - 1);
+			hp.add(props);
+			hp.add(new HTML("degrees"));
+			
+			doneButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					if (uses.getSelectedIndex() > 0) {
+						if (TimingDialog.home.getAppliance(TimingDialog.appName).isMultiple()) {
+							try {
+								TimingDialog.home.getAppliance(TimingDialog.appName).setQuantity(Integer.parseInt(quantity.getValue()));
+							} catch (Exception e) {
+								
+							}
+						} else {
+							TimingDialog.home.getAppliance(TimingDialog.appName).setQuantity(1);
+						}
+						TimingDialog.home.getAppliance(TimingDialog.appName).setTemps((props.getSelectedIndex() + 1) * 25);
+						TimingDialog.home.getAppliance(TimingDialog.appName).setUses(uses.getSelectedIndex());
+						ResultsPanel.order.add(TimingDialog.appName);
+						WorkingPanel.updateResults();
+					} else {
+						TimingDialog.source.setDown(false);
+						ResultsPanel.order.remove(TimingDialog.appName);
+						WorkingPanel.updateResults();
 					}
 					TimingDialog.this.hide();
 				}
 			});
 		}
 		
+		/*
 		if (TimingDialog.home.getAppliance(appName).getStandbyWatts() > 0) {
 			hp.add(new HTML("Left on standby?"));
 			hp.add(usesStandby);
-		}
+		}*/
 		
 		content.add(hp);
 		content.add(doneButton);

@@ -8,21 +8,18 @@ import bzb.gwt.hec.client.HomeEnergyCalc.Format;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.ColumnChart;
-import com.google.gwt.visualization.client.visualizations.ColumnChart.Options;
-import com.google.gwt.visualization.client.visualizations.PieChart;
 
 public class ResultsPanel extends VerticalPanel {
 	
-	private static Options options;
+	//private static Options options;
 	private static VerticalPanel results;
 	static ArrayList<String> order;
+	static DataTable data;
 	
 	private static final double KWH_EMISSIONS = 0.544; // 1kWh = 0.544kg CO2
 	private static final double KWH_COST = 0.1; // 1kWh = 10p
@@ -41,6 +38,7 @@ public class ResultsPanel extends VerticalPanel {
 
 	public static String html;
 	public static String totalHtml;
+	static boolean metTarget = false;
 
 	public ResultsPanel () {
 		order = new ArrayList<String>();
@@ -48,48 +46,31 @@ public class ResultsPanel extends VerticalPanel {
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				setWidth("550px");
-				
-				options = Options.create();
-			    options.setWidth(360);
-			    options.setHeight(280);
-			    options.set3D(false);
-			    //options.setTitle("Results");
-			    options.setStacked(false);
-			    options.setAxisFontSize(8.0);
-			    options.setLegend(LegendPosition.NONE);
-			    options.setBackgroundColor("#919892");
-			    //options.setAxisColor("black");
-			    //options.setShowCategories(false);
-			    //options.setTitleX("Categories");
-			    options.setTitleY(getUnitName() + " (" + getUnits() + ")");
-				
 				setStyleName("meter");
 				
 				results = new VerticalPanel();
 				add(results);
 			}
 		};
-		VisualizationUtils.loadVisualizationApi(onLoadCallback, PieChart.PACKAGE);
+		VisualizationUtils.loadVisualizationApi(onLoadCallback, ColumnChart.PACKAGE);
 		
 		setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		
-		setStyleName("results");
 	}
 
-	public void updateResults (final HomeEnergyCalc home) {
+	public void updateResults () {
 		clear();
 		results = new VerticalPanel();
 		results.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		html = "";
+		html = "<h2>Itemised summary</h2><ul>";
 		totalHtml = "";
-		DataTable data = DataTable.create();
-	    data.addColumn(ColumnType.STRING, getUnitName());
-	    data.addColumn(ColumnType.NUMBER, getUnits());
-	    data.addRows(home.getCategories().length);
+		data = DataTable.create();
+	    data.addColumn(ColumnType.STRING, getUnitName().replaceAll("\\<.*?>",""));
+	    data.addColumn(ColumnType.NUMBER, getUnits().replaceAll("\\<.*?>",""));
+	    data.addRows(HomeEnergyCalc.getCategories().length);
 		totalKwh = 0;
 		
-		for (int i = 0; i < home.getCategories().length; i++) {
-			ArrayList<Appliance> apps = home.getAppliancesInCategory(i);
+		for (int i = 0; i < HomeEnergyCalc.getCategories().length; i++) {
+			ArrayList<Appliance> apps = HomeEnergyCalc.getAppliancesInCategory(i);
 			Iterator<Appliance> appI = apps.iterator();
 			double catKwh = 0.0;
 			while (appI.hasNext()) {
@@ -124,98 +105,104 @@ public class ResultsPanel extends VerticalPanel {
 				}
 			}
 			
-			data.setValue(i, 0, home.getCategories()[i]);
+			data.setValue(i, 0, HomeEnergyCalc.getCategories()[i]);
 		    data.setValue(i, 1, toCorrectUnits(catKwh));
 		}
 		
 		Collections.reverse(order);
 		Iterator<String> appI = order.iterator();
 		while (appI.hasNext()) {
-			Appliance app = home.getAppliance(appI.next());
+			Appliance app = HomeEnergyCalc.getAppliance(appI.next());
 			if (app.getUse() == Appliance.USE_TIMED && (app.getHours() > 0 || app.getMinutes() > 0)) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				double hours = (double)app.getHours() + (double)app.getMinutes() * 5.0 / 60.0;
 				double kwh = kw * hours;
 				totalKwh += kwh;
-				html += "<p>" + app.getName();
+				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + hours + " hours = " + formatUnits(kwh) + "</p>";
+				html += " x " + hours + " hours = " + formatUnits(kwh) + "</li>";
 				
 				if (app.isUsesStandby() && app.getStandbyWatts() > 0) {
 					kw = (double)app.getStandbyWatts() / 1000.0 * app.getQuantity();
 					hours = 24 - hours;
 					kwh = kw * hours;
 					totalKwh += kwh;
-					html += "<p>" + app.getName();
+					html += "<li>" + app.getName();
 					if (app.getQuantity() > 1) {
 						html += " (x" + app.getQuantity() + ")";
 					}
-					html += " on standby x " + hours + " hours = " + formatUnits(kwh) + "</p>";
+					html += " on standby x " + hours + " hours = " + formatUnits(kwh) + "</li>";
 				}
 			} else if (app.getUse() == Appliance.USE_PROPS) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				double kwh = kw * (double)app.getProps() / 100 * app.getUses();
 				totalKwh += kwh;
-				html += "<p>" + app.getName();
+				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + app.getUses() + " uses x " + app.getProps() + "% = " + formatUnits(kwh) + "</p>";
+				html += " x " + app.getUses() + " uses x " + app.getProps() + "% = " + formatUnits(kwh) + "</li>";
 			} else if (app.getUse() == Appliance.USE_TEMPS) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				double kwh = kw * (double)app.getTemps() / 100 * app.getUses();
 				totalKwh += kwh;
-				html += "<p>" + app.getName();
+				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + app.getUses() + " uses at " + app.getTemps() + " degrees = " + formatUnits(kwh) + "</p>";
+				html += " x " + app.getUses() + " uses at " + app.getTemps() + " degrees = " + formatUnits(kwh) + "</li>";
 			} else if (app.getUse() == Appliance.USE_SINGLE && app.getUses() > 0) {
 				double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				double tkwh = kwh * app.getUses();
 				totalKwh += tkwh;
-				html += "<p>" + app.getName();
+				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + app.getUses() + " uses = " + formatUnits(tkwh) + "</p>";
+				html += " x " + app.getUses() + " uses = " + formatUnits(tkwh) + "</li>";
 			} else if (app.getUse() == Appliance.USE_CONSTANT && app.isConstant()) {
 				double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				totalKwh += kwh;
-				html += "<p>" + app.getName();
+				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " = " + formatUnits(kwh) + "</p>";
+				html += " = " + formatUnits(kwh) + "</li>";
 			} else if (app.getUse() == Appliance.USE_DISTANCE && app.getQuantity() > 0) {
 				double kwh = (double)app.getWatts() * KWH_EMISSIONS * app.getQuantity() / 1000 * KM_PER_MILE;
 				totalKwh += kwh;
-				html += "<p>" + app.getName();
+				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + " miles)";
 				}
-				html += " = " + formatUnits(kwh) + "</p>";
+				html += " = " + formatUnits(kwh) + "</li>";
 			}
 		}
+		html += "</ul>";
 		Collections.reverse(order);
 			
 		if (targetKwh >= 0.0) {
 			String totalStyle;
 			if (totalKwh > targetKwh) {
 				totalStyle = "red";
+				WorkingPanel.submit.setEnabled(false);
+				WorkingPanel.submit.addStyleName("disabledResultsButton");
+				metTarget  = false;
 			} else {
 				totalStyle = "green";
+				WorkingPanel.submit.setEnabled(true);
+				WorkingPanel.submit.removeStyleName("disabledResultsButton");
+				metTarget = true;
 			}
 			totalHtml += "<div class='runningTarget' style='background: " + totalStyle + " !important;'>Total " + getUnitName() + " = " + formatUnits(totalKwh) + "; Target = " + formatUnits(targetKwh) + "</div>";
 		}
 		
-		ColumnChart col = new ColumnChart(data, options);
-		
-		results.add(col);
-		
-		results.add(new HTML(html));
+		if (WorkingPanel.lhsPanel.getWidgetCount() > 1) {
+			WorkingPanel.lhsPanel.remove(1);
+		}
+		WorkingPanel.lhsPanel.add(new HTML(html));
 		
 		add(results);
 		
@@ -241,11 +228,11 @@ public class ResultsPanel extends VerticalPanel {
 	
 	public static String getUnits () {
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
-			return "&pound;";
+			return "<span style='font-weight: bold;'>&pound;</span>";
 		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
-			return "kg CO<sub>2</sub>";
+			return "<span style='font-weight: bold;'>kg CO<sub>2</sub></span>";
 		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
-			return "kWh";
+			return "<span style='font-weight: bold;'>kWh</span>";
 		} else {
 			return null;
 		}

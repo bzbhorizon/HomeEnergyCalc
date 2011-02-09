@@ -6,6 +6,10 @@ h1 {
   	letter-spacing: -5px;
 }
 
+h2 {
+	margin: 10px 0px 0px 0px !important;
+}
+
 .appliancePanels {
 	margin-right: 40px;	
 }
@@ -87,17 +91,16 @@ h1 {
 	font-family: arial, helvetica;
 }
 
+.disabledResultsButton {
+	background: #EEEEEE !important;
+}
+
 .submitButton {
 	border: 1pt black solid !important;
 	color: black;
 	font-size: 8pt !important;
 	margin: 20px !important;
 }
-
-.results {
-	padding: 0px 20px;
-	font-size: 8pt;
-	}
 
 .runningTarget {
 	color: white !important;
@@ -205,9 +208,10 @@ img {
 	
 .gwt-DialogBox {
 	border: none !important;
+	background-color: white !important;
 	background: rgba(255,255,255,0.95) !important;
 	padding: 20px !important;
-	margin: 30px !important;
+	margin: 10px !important;
 	-webkit-border-radius: 20px !important;
 	-moz-border-radius: 20px !important;
 	-moz-box-shadow: 3px 3px 4px #666;
@@ -222,7 +226,7 @@ img {
 .gwt-DialogBox .Caption {
 	color: black;
 	padding: 0px !important;
-	margin: 0px 0px 20px 0px !important;
+	margin: 0px !important;
 	border: none !important;
 	background: transparent !important;
 }

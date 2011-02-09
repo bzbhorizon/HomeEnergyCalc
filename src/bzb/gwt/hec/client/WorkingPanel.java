@@ -5,7 +5,6 @@ import bzb.gwt.hec.client.HomeEnergyCalc.State;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -16,30 +15,27 @@ public class WorkingPanel extends HorizontalPanel {
 	private static AppliancePanels ap;
 	private static ResultsPanel rp;
 	
-	private static HomeEnergyCalc hec;
-	
 	static Button reset;
 	static Button submit;
+	static VerticalPanel lhsPanel;
 	
-	public WorkingPanel (HomeEnergyCalc hec) {
-		setHec(hec);
-		
+	public WorkingPanel () {
 		setStyleName("horApp");
 		
-		VerticalPanel vp = new VerticalPanel();
-		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		lhsPanel = new VerticalPanel();
+		lhsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		
-		ap = new AppliancePanels(getHec());
-		vp.add(ap);
+		ap = new AppliancePanels();
+		lhsPanel.add(ap);
 		
 		HorizontalPanel buttons = new HorizontalPanel();
 		
-		reset = new Button("Clear choices");
+		reset = new Button("Clear all choices");
 		reset.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				ap.reset();
-				rp.updateResults(getHec());
+				rp.updateResults();
 			}
 			
 		});
@@ -49,10 +45,15 @@ public class WorkingPanel extends HorizontalPanel {
 		submit = new Button("Calculate target");
 		submit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				getHec().updateRootPanel(State.REFLECTION);
 				reset.setVisible(false);
 				submit.setVisible(false);
 				HomeEnergyCalc.getFloating().clear();
+				if (!ResultsPanel.metTarget) {
+					HomeEnergyCalc.updateRootPanel(State.REFLECTION);
+					submit.setText("Finish");
+				} else {
+					HomeEnergyCalc.updateRootPanel(State.FINISH);
+				}
 			}
 		});
 		submit.addStyleName("getResultsButton");
@@ -60,22 +61,16 @@ public class WorkingPanel extends HorizontalPanel {
 		
 		RootPanel.get("floating").add(buttons);
 		
-		add(vp);
+		
+		
+		add(lhsPanel);
 		
 		rp = new ResultsPanel();
 		add(rp);
 	}
-
-	public static void setHec(HomeEnergyCalc hec) {
-		WorkingPanel.hec = hec;
-	}
-
-	public static HomeEnergyCalc getHec() {
-		return hec;
-	}
 	
 	public static void updateResults () {
-		rp.updateResults(getHec());
+		rp.updateResults();
 	}
 	
 }

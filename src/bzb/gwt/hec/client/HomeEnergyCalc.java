@@ -16,12 +16,13 @@ public class HomeEnergyCalc implements EntryPoint {
 		"Kitchen","Laundry","Health/Personal Care","Lighting, Heating and Cooling","Home Entertainment","Office, PCs and Phones"//,"Travel"
 	};
 	
-	public enum State { WORKING, REFLECTION };
+	public enum State { WORKING, REFLECTION, FINISH };
 	private static State state = State.WORKING;
 	
 	public static WorkingPanel wp;
 	private static BriefPanel bp;
 	private static ReflectionPanel rp;
+	private static FinishPanel fp;
 	private static VerticalPanel floating;
 	
 	public enum Format { COST, EMISSIONS, ENERGY };
@@ -105,7 +106,7 @@ public class HomeEnergyCalc implements EntryPoint {
 		appliances.put("Printer", new Appliance("Printer", "printer.png", 14, Appliance.USE_TIMED, 5, true, 4));
 		appliances.put("Mobile phone (plugged in)", new Appliance("Mobile phone (plugged in)", "mobilePhone.png", 5, Appliance.USE_TIMED, 5, true, 0));
 		appliances.put("iPad (plugged in)", new Appliance("iPad (plugged in)", "ipad.png", 10, Appliance.USE_TIMED, 5, true, 0));
-		appliances.put("Cordless phone", new Appliance("Cordless phone", "cordlessPhone.png", 2, Appliance.USE_CONSTANT, 5, true, 0));
+		//appliances.put("Cordless phone", new Appliance("Cordless phone", "cordlessPhone.png", 2, Appliance.USE_CONSTANT, 5, true, 0));
 		
 		// travel based on 1kWh = 544g CO2
 		/*appliances.put("Bus", new Appliance("Bus", "bus.png", 134, Appliance.USE_DISTANCE, 6, true, 0));
@@ -126,23 +127,30 @@ public class HomeEnergyCalc implements EntryPoint {
 		
 	}
 	
-	public void updateRootPanel (State newState) {
+	public static void updateRootPanel (State newState) {
 		if (newState != null) {
 			setState(newState);
 		}
 		if (state == State.WORKING) {
 			if (wp == null) {
-				wp = new WorkingPanel(this);
+				wp = new WorkingPanel();
 			}
 			RootPanel.get("app").clear();
 			RootPanel.get("app").add(wp);
 		} else if (state == State.REFLECTION) {
 			if (rp == null) {
-				rp = new ReflectionPanel(this);
+				rp = new ReflectionPanel();
 			}
 			rp.update();
 			RootPanel.get("app").clear();
 			RootPanel.get("app").add(rp);
+		} else if (state == State.FINISH) {
+			if (fp == null) {
+				fp = new FinishPanel();
+			}
+			fp.update();
+			RootPanel.get("app").clear();
+			RootPanel.get("app").add(fp);
 		}
 		if (Window.Location.getParameter("type") != null) {
 			setFormat(Format.valueOf(Window.Location.getParameter("type").toUpperCase()));
@@ -160,7 +168,7 @@ public class HomeEnergyCalc implements EntryPoint {
 		RootPanel.get("sub").add(subHTML);
 	}
 	
-	public ArrayList<Appliance> getAppliancesInCategory (int category) {
+	public static ArrayList<Appliance> getAppliancesInCategory (int category) {
 		ArrayList<Appliance> matchingAppliances = new ArrayList<Appliance>();
 		for (Appliance app : appliances.values()) {
 			if (app.getCategory() == category) {
@@ -170,11 +178,11 @@ public class HomeEnergyCalc implements EntryPoint {
 		return matchingAppliances;
 	}
 	
-	public String[] getCategories () {
+	public static String[] getCategories () {
 		return categories;
 	}
 	
-	public Appliance getAppliance (String appName) {
+	public static Appliance getAppliance (String appName) {
 		return appliances.get(appName);
 	}
 	

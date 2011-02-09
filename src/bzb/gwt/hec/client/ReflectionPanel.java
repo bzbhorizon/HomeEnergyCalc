@@ -10,10 +10,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.visualization.client.LegendPosition;
+import com.google.gwt.visualization.client.visualizations.ColumnChart;
+import com.google.gwt.visualization.client.visualizations.ColumnChart.Options;
 
 public class ReflectionPanel extends FlowPanel {
-	
-	private static HomeEnergyCalc hec;
 	
 	private static double newTotal;
 	private static HTML newTotalHTML;
@@ -22,10 +23,19 @@ public class ReflectionPanel extends FlowPanel {
 
 	private static VerticalPanel vp;
 	
-	public ReflectionPanel(HomeEnergyCalc hec) {
-		setHec(hec);
-		
-		update();
+	private static String[] bits;
+	
+	public ReflectionPanel() {
+		if (HomeEnergyCalc.getFormat() == Format.COST) {
+			bits = new String[]{"does your daily energy use <span style='font-weight: bold;'>cost</span>",
+					"energy costs"};
+		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
+			bits = new String[]{"<span style='font-weight: bold;'>CO<sub>2</sub></span> does your daily energy use produce",
+					"CO<sub>2</sub> emissions"};
+		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
+			bits = new String[]{"<span style='font-weight: bold;'>energy</span> do you use daily",
+					"energy consumption"};
+		}
 	}
 	
 	public void onLoad() {
@@ -34,15 +44,40 @@ public class ReflectionPanel extends FlowPanel {
 	
 	public void update () {
 		clear();
-		add(new HTML("Your current total is " + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh()) +
-			"<h2>Summary</h2>" +
-			ResultsPanel.html));
+		
+		int i = 0;
+		
+		add(new HTML("<p>This is an illustration of your daily energy use:</p>" +
+				"<p>How much " + bits[i++] + "?</p>" +
+				"<p>Your current total is: <span style='font-size: 24pt; font-weight: bold;'>" + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh()) + "</span></p>"));
 		
 		HorizontalPanel hp = new HorizontalPanel();
 		
+		hp.add(new HTML(ResultsPanel.html));
+		
+		if (ResultsPanel.data != null) {
+			Options options = Options.create();
+		    options.setWidth(500);
+		    options.setHeight(280);
+		    options.set3D(true);
+		    options.setStacked(false);
+		    options.setAxisFontSize(8.0);
+		    options.setLegend(LegendPosition.NONE);
+		    options.setBackgroundColor("white");
+		    options.setTitleY(ResultsPanel.getUnitName().replaceAll("\\<.*?>","") + " (" + ResultsPanel.getUnits().replaceAll("\\<.*?>","") + ")");
+	    
+	    	ColumnChart col = new ColumnChart(ResultsPanel.data, options);
+	    	hp.add(col);
+	    }
+		
+		add(hp);
+		add(new HTML("<p style='font-size: 14pt;'>Please now revisit the game and see if you can reduce your <span style='font-weight: bold;'>" + bits[i++] + "</span> by 5%</p>"));
+		
+		HorizontalPanel buttonsHp = new HorizontalPanel();
+		
 		vp = new VerticalPanel();
 		vp.setStyleName("targetPanel");
-		String message = "Try to reduce your ";
+		String message = "Try to reduce your <span style='font-weight: bold;'>";
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
 			message += " costs ";
 		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
@@ -50,17 +85,17 @@ public class ReflectionPanel extends FlowPanel {
 		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
 			message += " energy use ";
 		}
-		message += " by 10%";
+		message += "</span> by 5%";
 		vp.add(new HTML(message));
 		
-		newTotal = ResultsPanel.getTotalKwh() * 0.90;
+		newTotal = ResultsPanel.getTotalKwh() * 0.95;
 		newTotalHTML = new HTML("Your target is " + ResultsPanel.formatUnits(newTotal));
 		newTotalHTML.setStyleName("target");
 		
 		//HorizontalPanel hp = new HorizontalPanel();
 		//hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		vp.add(newTotalHTML);
-		hp.add(vp);
+		buttonsHp.add(vp);
 		/*
 		VerticalPanel vp = new VerticalPanel();
 		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -92,23 +127,15 @@ public class ReflectionPanel extends FlowPanel {
 			public void onClick(ClickEvent event) {
 				ResultsPanel.setTargetKwh(newTotal);
 				WorkingPanel.updateResults();
-				getHec().updateRootPanel(State.WORKING);
+				HomeEnergyCalc.updateRootPanel(State.WORKING);
 				WorkingPanel.reset.setVisible(true);
 				WorkingPanel.submit.setVisible(true);
 			}
 		});
 		back.addStyleName("recalcButton");
-		hp.add(back);
+		buttonsHp.add(back);
 		
-		add(hp);
-	}
-
-	public static void setHec(HomeEnergyCalc hec) {
-		ReflectionPanel.hec = hec;
-	}
-
-	public static HomeEnergyCalc getHec() {
-		return hec;
+		add(buttonsHp);
 	}
 
 }

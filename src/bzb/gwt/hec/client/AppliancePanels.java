@@ -13,24 +13,24 @@ public class AppliancePanels extends TabPanel {
 	
 	private static ApplianceButton[][] buttons;
 	private static FlowPanel[] panels;
-	private static HomeEnergyCalc home;
+	//private static HomeEnergyCalc home;
 	private static TimingDialog td;
 	
-	public AppliancePanels (HomeEnergyCalc home) {
-		AppliancePanels.home = home;
-		buttons = new ApplianceButton[home.getCategories().length][];
-		panels = new FlowPanel[home.getCategories().length];
+	public AppliancePanels (/*HomeEnergyCalc home*/) {
+		//AppliancePanels.home = home;
+		buttons = new ApplianceButton[HomeEnergyCalc.getCategories().length][];
+		panels = new FlowPanel[HomeEnergyCalc.getCategories().length];
 		
 		for (int i = 0; i < panels.length; i++) {
 			panels[i] = new FlowPanel();
-			ArrayList<Appliance> thisApps = home.getAppliancesInCategory(i);
+			ArrayList<Appliance> thisApps = HomeEnergyCalc.getAppliancesInCategory(i);
 			buttons[i] = new ApplianceButton[thisApps.size()];
 			int j = 0;
-			for (Appliance app : home.getAppliancesInCategory(i)) {
+			for (Appliance app : HomeEnergyCalc.getAppliancesInCategory(i)) {
 				buttons[i][j] = new ApplianceButton(app);
 				panels[i].add(buttons[i][j++]);
 			}
-			add(panels[i], home.getCategories()[i]);
+			add(panels[i], HomeEnergyCalc.getCategories()[i]);
 		}
 
 	    selectTab(0);
@@ -45,7 +45,7 @@ public class AppliancePanels extends TabPanel {
 		for (int i = 0; i < buttons.length; i++) {
 			for (int j = 0; j < buttons[i].length; j++) {
 				buttons[i][j].setDown(false);
-				home.getAppliance(buttons[i][j].getUpFace().getText()).reset();
+				HomeEnergyCalc.getAppliance(buttons[i][j].getUpFace().getText()).reset();
 			}
 		}
 	}
@@ -76,7 +76,7 @@ public class AppliancePanels extends TabPanel {
 							ResultsPanel.order.add(getApp().getName());
 							WorkingPanel.updateResults();
 						} else {
-							setTd(new TimingDialog(AppliancePanels.home, ApplianceButton.this));
+							setTd(new TimingDialog(ApplianceButton.this));
 						}
 				    } else {
 				    	setHTML(getUpFaceHTML());

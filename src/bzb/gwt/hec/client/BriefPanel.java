@@ -67,7 +67,7 @@ public class BriefPanel extends DialogBox {
 				"<li>At the end of this study, you will be provided with additional information and feedback about the purpose of the study.</li>" +
 				"<li>All your answers are anonymous and will be held confidentially.</li>" +
 				"</ul></p>" +
-				"<p>Please click the button below to confirm that you consent to participate in the Home Energy Calculator</p>.");
+				"<p>Please click the button below to confirm that you consent to participate in the Home Energy Calculator.</p>");
 
 		text.setStyleName("briefText");
 		

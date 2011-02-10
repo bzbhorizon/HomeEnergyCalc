@@ -16,7 +16,7 @@ public class HomeEnergyCalc implements EntryPoint {
 		"Kitchen","Laundry","Health/Personal Care","Lighting, Heating and Cooling","Home Entertainment","Office, PCs and Phones"//,"Travel"
 	};
 	
-	public enum State { WORKING, REFLECTION, FINISH };
+	public enum State { WORKING, REFLECTION, FINISH, LEAVE };
 	private static State state = State.WORKING;
 	
 	public static WorkingPanel wp;
@@ -24,6 +24,7 @@ public class HomeEnergyCalc implements EntryPoint {
 	private static ReflectionPanel rp;
 	private static FinishPanel fp;
 	private static VerticalPanel floating;
+	private static LeavePanel lp;
 	
 	public enum Format { COST, EMISSIONS, ENERGY };
 	private static Format format = Format.ENERGY;
@@ -151,6 +152,12 @@ public class HomeEnergyCalc implements EntryPoint {
 			fp.update();
 			RootPanel.get("app").clear();
 			RootPanel.get("app").add(fp);
+		} else if (state == State.LEAVE) {
+			if (lp == null) {
+				lp = new LeavePanel();
+			}
+			RootPanel.get("app").clear();
+			RootPanel.get("app").add(lp);
 		}
 		if (Window.Location.getParameter("type") != null) {
 			setFormat(Format.valueOf(Window.Location.getParameter("type").toUpperCase()));

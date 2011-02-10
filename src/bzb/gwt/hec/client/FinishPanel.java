@@ -1,10 +1,10 @@
 package bzb.gwt.hec.client;
 
 import bzb.gwt.hec.client.HomeEnergyCalc.Format;
+import bzb.gwt.hec.client.HomeEnergyCalc.State;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class FinishPanel extends VerticalPanel {
@@ -51,8 +50,10 @@ public class FinishPanel extends VerticalPanel {
 		
 		final FormPanel form = new FormPanel();
 		form.setEncoding(FormPanel.ENCODING_MULTIPART);
-		form.setMethod(FormPanel.METHOD_POST);
+		form.setMethod(FormPanel.METHOD_GET);
 		VerticalPanel vp = new VerticalPanel();
+		form.setWidget(vp);
+		form.setAction("/upload");
 		
 		Hidden units = new Hidden();
 		units.setName("units");
@@ -71,8 +72,6 @@ public class FinishPanel extends VerticalPanel {
 		});
 		vp.add(submit);
 		
-		form.add(vp);
-		
 		form.addSubmitHandler(new SubmitHandler() {
 			public void onSubmit(SubmitEvent event) {
 				
@@ -80,7 +79,7 @@ public class FinishPanel extends VerticalPanel {
 		});
 		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
-				Window.alert(event.getResults());
+				HomeEnergyCalc.updateRootPanel(State.LEAVE);
 			}
 		});
 		

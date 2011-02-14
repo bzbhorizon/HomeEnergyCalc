@@ -60,10 +60,10 @@ public class BriefPanel extends DialogBox {
 		text = new HTML("<p>Hi!</p>" +
 				"<p>Thank you for logging in to the Home Energy Calculator.</p>" +
 				"<p>The Home Energy Calculator is a tool to help people understand how much " + bits[i++] + ".</p>" +
-				"<p>It will help you understand what your " + bits[i++] + ", and how much " + bits[i++] + " each appliance in your home " + bits[i++] + ". It takes about 15 minutes to complete the Home Energy Calculator.</p>" +
+				"<p>It will help you understand what your " + bits[i++] + ", and how much " + bits[i++] + " each appliance in your home " + bits[i++] + ". It takes about 15 minutes to complete.</p>" +
 				"<p>Please note that:" +
 				"<ul>" +
-				"<li>Your participation is entirely voluntary and you may withdraw from the Calculator at any time without giving a reason.</li>" +
+				"<li>Your participation is entirely voluntary and you may quit the website and the study at any time without giving a reason.</li>" +
 				"<li>At the end of this study, you will be provided with additional information and feedback about the purpose of the study.</li>" +
 				"<li>All your answers are anonymous and will be held confidentially.</li>" +
 				"</ul></p>" +

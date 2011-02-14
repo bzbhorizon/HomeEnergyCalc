@@ -28,6 +28,8 @@ public class HomeEnergyCalc implements EntryPoint {
 	
 	public enum Format { COST, EMISSIONS, ENERGY };
 	private static Format format = Format.ENERGY;
+	
+	private static long startTime = System.currentTimeMillis();
 
 	public HomeEnergyCalc () { //http://www.carbonfootprint.com/energyconsumption.html
 		setFloating(new VerticalPanel());
@@ -230,5 +232,9 @@ public class HomeEnergyCalc implements EntryPoint {
 
 	public static VerticalPanel getFloating() {
 		return floating;
+	}
+
+	public static long getStartTime() {
+		return startTime;
 	}
 }

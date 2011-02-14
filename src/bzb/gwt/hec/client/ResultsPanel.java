@@ -6,8 +6,11 @@ import java.util.Iterator;
 
 import bzb.gwt.hec.client.HomeEnergyCalc.Format;
 
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
@@ -49,6 +52,8 @@ public class ResultsPanel extends VerticalPanel {
 				setStyleName("meter");
 				
 				results = new VerticalPanel();
+				//results.setWidth("100%");
+				results.setStyleName("meterFace");
 				add(results);
 			}
 		};
@@ -59,8 +64,8 @@ public class ResultsPanel extends VerticalPanel {
 
 	public void updateResults () {
 		clear();
-		results = new VerticalPanel();
-		results.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		results.clear();
+		
 		html = "<h2>Itemised summary</h2><ul>";
 		totalHtml = "";
 		data = DataTable.create();
@@ -109,6 +114,8 @@ public class ResultsPanel extends VerticalPanel {
 		    data.setValue(i, 1, toCorrectUnits(catKwh));
 		}
 		
+		double thisCost = -1.0;
+		
 		Collections.reverse(order);
 		Iterator<String> appI = order.iterator();
 		while (appI.hasNext()) {
@@ -122,7 +129,11 @@ public class ResultsPanel extends VerticalPanel {
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + hours + " hours = " + formatUnits(kwh) + "</li>";
+				html += " x " + roundToTwo(hours) + " hours = " + formatUnits(kwh) + "</li>";
+				
+				if (thisCost == -1) {
+					thisCost = kwh;
+				}
 				
 				if (app.isUsesStandby() && app.getStandbyWatts() > 0) {
 					kw = (double)app.getStandbyWatts() / 1000.0 * app.getQuantity();
@@ -133,7 +144,7 @@ public class ResultsPanel extends VerticalPanel {
 					if (app.getQuantity() > 1) {
 						html += " (x" + app.getQuantity() + ")";
 					}
-					html += " on standby x " + hours + " hours = " + formatUnits(kwh) + "</li>";
+					html += " on standby x " + roundToTwo(hours) + " hours = " + formatUnits(kwh) + "</li>";
 				}
 			} else if (app.getUse() == Appliance.USE_PROPS) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
@@ -144,6 +155,10 @@ public class ResultsPanel extends VerticalPanel {
 					html += " (x" + app.getQuantity() + ")";
 				}
 				html += " x " + app.getUses() + " uses x " + app.getProps() + "% = " + formatUnits(kwh) + "</li>";
+				
+				if (thisCost == -1) {
+					thisCost = kwh;
+				}
 			} else if (app.getUse() == Appliance.USE_TEMPS) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				double kwh = kw * (double)app.getTemps() / 100 * app.getUses();
@@ -153,6 +168,10 @@ public class ResultsPanel extends VerticalPanel {
 					html += " (x" + app.getQuantity() + ")";
 				}
 				html += " x " + app.getUses() + " uses at " + app.getTemps() + " degrees = " + formatUnits(kwh) + "</li>";
+				
+				if (thisCost == -1) {
+					thisCost = kwh;
+				}
 			} else if (app.getUse() == Appliance.USE_SINGLE && app.getUses() > 0) {
 				double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				double tkwh = kwh * app.getUses();
@@ -162,6 +181,10 @@ public class ResultsPanel extends VerticalPanel {
 					html += " (x" + app.getQuantity() + ")";
 				}
 				html += " x " + app.getUses() + " uses = " + formatUnits(tkwh) + "</li>";
+				
+				if (thisCost == -1) {
+					thisCost = kwh;
+				}
 			} else if (app.getUse() == Appliance.USE_CONSTANT && app.isConstant()) {
 				double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				totalKwh += kwh;
@@ -170,6 +193,10 @@ public class ResultsPanel extends VerticalPanel {
 					html += " (x" + app.getQuantity() + ")";
 				}
 				html += " = " + formatUnits(kwh) + "</li>";
+				
+				if (thisCost == -1) {
+					thisCost = kwh;
+				}
 			} else if (app.getUse() == Appliance.USE_DISTANCE && app.getQuantity() > 0) {
 				double kwh = (double)app.getWatts() * KWH_EMISSIONS * app.getQuantity() / 1000 * KM_PER_MILE;
 				totalKwh += kwh;
@@ -178,6 +205,10 @@ public class ResultsPanel extends VerticalPanel {
 					html += " (x" + app.getQuantity() + " miles)";
 				}
 				html += " = " + formatUnits(kwh) + "</li>";
+				
+				if (thisCost == -1) {
+					thisCost = kwh;
+				}
 			}
 		}
 		html += "</ul>";
@@ -204,7 +235,108 @@ public class ResultsPanel extends VerticalPanel {
 		}
 		WorkingPanel.lhsPanel.add(new HTML(html));
 		
-		add(results);
+		Grid g = new Grid(2, 2);
+		g.setCellPadding(10);
+		results.add(g);
+		g.setWidth("360px");
+		
+		VerticalPanel tl = new VerticalPanel();
+		g.setWidget(0, 0, tl);
+		tl.setWidth("160px");
+		tl.setHeight("117px");
+		tl.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		tl.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		tl.add(new HTML("<span style='font-weight: bold; font-size: 20px; letter-spacing: -2px;'>DAY'S USAGE</span>"));
+		if (HomeEnergyCalc.getFormat() == HomeEnergyCalc.Format.EMISSIONS) {
+			tl.add(new HTML("<span style='font-weight: bold; font-size: 30px; letter-spacing: -3px;'>" + formatUnits(totalKwh) + "</span>"));
+		} else {
+			tl.add(new HTML("<span style='font-weight: bold; font-size: 50px; letter-spacing: -5px;'>" + formatUnits(totalKwh) + "</span>"));
+		}
+		
+		
+		VerticalPanel tr = new VerticalPanel();
+		g.setWidget(0, 1, tr);
+		tr.setWidth("160px");
+		tr.setHeight("117px");
+		tr.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		tr.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		if (order.size() > 0) {
+			tr.add(new HTML("<span style='font-weight: bold; font-size: 15px; letter-spacing: -1px;'>" + order.get(order.size() - 1).toUpperCase() + "</span>"));
+			tr.add(new HTML("<span style='font-weight: bold; font-size: 30px; letter-spacing: -3px;'>" + formatUnits(thisCost) + "</span>"));
+		} else {
+			tr.add(new HTML("---"));
+			tr.add(new HTML("---"));
+		}
+		
+		VerticalPanel bl = new VerticalPanel();
+		g.setWidget(1, 0, bl);
+		bl.setWidth("160px");
+		bl.setHeight("117px");
+		bl.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		bl.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		bl.add(new HTML("<span style='font-weight: bold; font-size: 20px; letter-spacing: -2px;'>MONTH'S USAGE</span>"));
+		if (HomeEnergyCalc.getFormat() == HomeEnergyCalc.Format.EMISSIONS) {
+			bl.add(new HTML("<span style='font-weight: bold; font-size: 30px; letter-spacing: -3px;'>" + formatUnits(totalKwh * 28) + "</span>"));
+		} else {
+			bl.add(new HTML("<span style='font-weight: bold; font-size: 45px; letter-spacing: -5px;'>" + formatUnits(totalKwh * 28) + "</span>"));
+		}
+		
+		
+		VerticalPanel br = new VerticalPanel();
+		g.setWidget(1, 1, br);
+		br.setWidth("160px");
+		br.setHeight("117px");
+		br.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		br.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		if (totalKwh > 0 && thisCost > 0) {
+			double thisProp = thisCost / totalKwh;
+			br.add(new HTML("=" + ((int)Math.round(thisProp * 100)) + "% today's " + getUnitName()));
+			Grid g1 = new Grid(1, 2);
+			g1.setCellSpacing(2);
+			br.add(g1);
+			g1.setSize("85px", "50px");
+			SimplePanel block1 = new SimplePanel();
+			g1.setWidget(0, 0, block1);
+			block1.setWidth((1 - thisProp) * 85.0 + "px");
+			block1.setHeight("50px");
+			block1.setStyleName("block1");
+			SimplePanel block2 = new SimplePanel();
+			g1.setWidget(0, 1, block2);
+			block2.setWidth(thisProp * 85.0 + "px");
+			block2.setHeight("50px");
+			block2.setStyleName("block2");
+		}
+		
+		
+		//HorizontalPanel hp = new HorizontalPanel();
+		//results.add(hp);
+		//hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		//hp.setWidth("100%");
+		/*
+		VerticalPanel meterLhs = new VerticalPanel();
+		meterLhs.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		meterLhs.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		meterLhs.add(new HTML("<span style='font-weight: bold; font-size: 20px;'>DAY'S USAGE</span>"));
+		meterLhs.add(new HTML("<span style='font-weight: bold; font-size: 40px;'>" + formatUnits(totalKwh) + "</span>"));
+		meterLhs.add(new HTML("<span style='font-weight: bold; font-size: 20px;'>MONTH'S USAGE</span>"));
+		meterLhs.add(new HTML("<span style='font-weight: bold; font-size: 40px;'>" + formatUnits(totalKwh * 28) + "</span>"));
+		
+		VerticalPanel meterRhs = new VerticalPanel();
+		meterRhs.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		meterRhs.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		meterRhs.add(new HTML("Graph"));
+		if (order.size() > 0) {
+			meterRhs.add(new HTML("<span style='font-weight: bold; font-size: 15px;'>" + order.get(order.size() - 1).toUpperCase() + "</span>"));
+			meterRhs.add(new HTML("<span style='font-weight: bold; font-size: 30px;'>" + formatUnits(thisCost) + "</span>"));
+		} else {
+			meterRhs.add(new HTML("---"));
+			meterRhs.add(new HTML("---"));
+		}
+		hp.add(meterLhs);
+		hp.add(meterRhs);
+		add(results);*/
+		
+		add(g);
 		
 		HomeEnergyCalc.getFloating().clear();
 		HomeEnergyCalc.getFloating().add(new HTML(totalHtml));

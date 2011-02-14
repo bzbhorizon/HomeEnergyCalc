@@ -5,12 +5,11 @@ import bzb.gwt.hec.client.HomeEnergyCalc.State;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
-import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.TextArea;
@@ -60,23 +59,26 @@ public class FinishPanel extends VerticalPanel {
 		units.setValue(HomeEnergyCalc.getFormat().name());
 		vp.add(units);
 		
-		TextArea response = new TextArea();
+		final Hidden time = new Hidden();
+		time.setName("time");
+		vp.add(time);
+		
+		final TextArea response = new TextArea();
+		response.setSize(Window.getClientWidth() * 0.8 + "px", "200px");
 		response.setName("response");
 		vp.add(response);
 		
-		Button submit = new Button("Submit");
+		final Button submit = new Button("Submit");
 		submit.addClickHandler(new ClickHandler() {
 		    public void onClick(ClickEvent event) {
+		    	time.setValue(Long.toString(System.currentTimeMillis() - HomeEnergyCalc.getStartTime()));
 		        form.submit();
+		        response.setEnabled(false);
+		    	submit.setEnabled(false);
 		    }
 		});
 		vp.add(submit);
-		
-		form.addSubmitHandler(new SubmitHandler() {
-			public void onSubmit(SubmitEvent event) {
-				
-			}
-		});
+
 		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 				HomeEnergyCalc.updateRootPanel(State.LEAVE);

@@ -6,8 +6,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
-
 @PersistenceCapable
 public class Response {
 	
@@ -23,13 +21,17 @@ public class Response {
 	private String response;
 	
 	@Persistent
+	private long duration;
+	
+	@Persistent
 	private long timestamp = System.currentTimeMillis();
 	
 	public Response () {}
 	
-	public Response (String units, String response) {
+	public Response (String units, String response, long duration) {
 		setUnits(units);
 		setResponse(response);
+		setDuration(duration);
 	}
 
 	public void setUnits(String units) {
@@ -54,6 +56,14 @@ public class Response {
 
 	public String getKey() {
 		return key;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+	public long getDuration() {
+		return duration;
 	}
 
 }

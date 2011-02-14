@@ -27,13 +27,13 @@ public class ReflectionPanel extends FlowPanel {
 	
 	public ReflectionPanel() {
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
-			bits = new String[]{"does your daily energy use <span style='font-weight: bold;'>cost</span>",
+			bits = new String[]{//"does your daily energy use <span style='font-weight: bold;'>cost</span>",
 					"energy costs"};
 		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
-			bits = new String[]{"<span style='font-weight: bold;'>CO<sub>2</sub></span> does your daily energy use produce",
+			bits = new String[]{//"<span style='font-weight: bold;'>CO<sub>2</sub></span> does your daily energy use produce",
 					"CO<sub>2</sub> emissions"};
 		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
-			bits = new String[]{"<span style='font-weight: bold;'>energy</span> do you use daily",
+			bits = new String[]{//"<span style='font-weight: bold;'>energy</span> do you use daily",
 					"energy consumption"};
 		}
 	}
@@ -48,7 +48,7 @@ public class ReflectionPanel extends FlowPanel {
 		int i = 0;
 		
 		add(new HTML("<p>This is an illustration of your daily energy use:</p>" +
-				"<p>How much " + bits[i++] + "?</p>" +
+				//"<p>How much " + bits[i++] + "?</p>" +
 				"<p>Your current total is: <span style='font-size: 24pt; font-weight: bold;'>" + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh()) + "</span></p>"));
 		
 		HorizontalPanel hp = new HorizontalPanel();
@@ -64,7 +64,7 @@ public class ReflectionPanel extends FlowPanel {
 		    options.setAxisFontSize(8.0);
 		    options.setLegend(LegendPosition.NONE);
 		    options.setBackgroundColor("white");
-		    options.setTitleY(ResultsPanel.getUnitName().replaceAll("\\<.*?>","") + " (" + ResultsPanel.getUnits().replaceAll("\\<.*?>","") + ")");
+		    options.setTitleY(ResultsPanel.getUnitName().replaceAll("\\<.*?>","").replaceAll("&.+;","£") + " (" + ResultsPanel.getUnits().replaceAll("\\<.*?>","").replaceAll("&.+;","£") + ")");
 	    
 	    	ColumnChart col = new ColumnChart(ResultsPanel.data, options);
 	    	hp.add(col);

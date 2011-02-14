@@ -14,8 +14,8 @@ public class Upload extends HttpServlet {
 	
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
-    	if (req.getParameter("units") != null && req.getParameter("response") != null) {
-    		Response r = new Response(req.getParameter("units"), req.getParameter("response"));
+    	if (req.getParameter("response") != null) {
+    		Response r = new Response(req.getParameter("units"), req.getParameter("response"), Long.parseLong(req.getParameter("time")));
 	    	PersistenceManager pm = PMF.get().getPersistenceManager();
 	        try {
 	        	pm.makePersistent(r); 

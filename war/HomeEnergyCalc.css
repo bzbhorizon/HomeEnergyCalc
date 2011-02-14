@@ -120,8 +120,20 @@ h2 {
 	background-position: 0px 30px;
 	height: 634px;
 	margin: 0px 0px 0px 0px;
-	padding: 160px 0px 0px 0px;
+	padding: 150px 0px 0px 0px;
 	}
+	
+.meterFace {
+	height: 274px;
+	}
+	
+.block1 {
+	background: rgba(0,0,0,0.5);
+}
+
+.block2 {
+	background: rgba(0,0,0,1);
+}
 
 .gwt-TabBar {
 }

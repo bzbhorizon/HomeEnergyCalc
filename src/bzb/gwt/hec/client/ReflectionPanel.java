@@ -64,14 +64,14 @@ public class ReflectionPanel extends FlowPanel {
 		    options.setAxisFontSize(8.0);
 		    options.setLegend(LegendPosition.NONE);
 		    options.setBackgroundColor("white");
-		    options.setTitleY(ResultsPanel.getUnitName().replaceAll("\\<.*?>","").replaceAll("&.+;","£") + " (" + ResultsPanel.getUnits().replaceAll("\\<.*?>","").replaceAll("&.+;","£") + ")");
+		    options.setTitleY(ResultsPanel.getUnitName().replaceAll("\\<.*?>","").replaceAll("&.+;","£"));
 	    
 	    	ColumnChart col = new ColumnChart(ResultsPanel.data, options);
 	    	hp.add(col);
 	    }
 		
 		add(hp);
-		add(new HTML("<p style='font-size: 14pt;'>Please now revisit the game and see if you can reduce your <span style='font-weight: bold;'>" + bits[i++] + "</span> by 5%</p>"));
+		add(new HTML("<p style='font-size: 14pt;'>Please now revisit the calculator and see if you can reduce your <span style='font-weight: bold;'>" + bits[i++] + "</span> by 5%</p>"));
 		
 		HorizontalPanel buttonsHp = new HorizontalPanel();
 		

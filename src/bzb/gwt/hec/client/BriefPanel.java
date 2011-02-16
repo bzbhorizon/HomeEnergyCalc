@@ -30,29 +30,29 @@ public class BriefPanel extends DialogBox {
 		
 		String[] bits = null;
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
-			bits = new String[]{"the energy they use at home <span style='font-weight: bold;'>costs</span>",
-					"daily energy use <span style='font-weight: bold;'>costs</span>",
-					"it <span style='font-weight: bold;'>costs</span> to use",
+			bits = new String[]{"the energy they use at home <span style='font-weight: normal;'>costs</span>",
+					"daily energy use <span style='font-weight: normal;'>costs</span>",
+					"it <span style='font-weight: normal;'>costs</span> to use",
 					"",
-					"it <span style='font-weight: bold;'>costs</span> to use these",
-					"<span style='font-weight: bold;'>money</span> the energy you used at home <span style='font-weight: bold;'>cost</span>",
-					"<span style='font-weight: bold;'>costs</span>"};
+					"it <span style='font-weight: normal;'>costs</span> to use these",
+					"<span style='font-weight: normal;'>money</span> the energy you used at home <span style='font-weight: normal;'>cost</span>",
+					"<span style='font-weight: normal;'>costs</span>"};
 		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
-			bits = new String[]{"<span style='font-weight: bold;'>CO<sub>2</sub></span> the energy they use at home generates",
-					"<span style='font-weight: bold;'>CO<sub>2</sub></span> your daily energy use generates",
-					"<span style='font-weight: bold;'>CO<sub>2</sub></span>",
+			bits = new String[]{"<span style='font-weight: normal;'>CO<sub>2</sub></span> the energy they use at home generates",
+					"<span style='font-weight: normal;'>CO<sub>2</sub></span> your daily energy use generates",
+					"<span style='font-weight: normal;'>CO<sub>2</sub></span>",
 					"generates",
-					"<span style='font-weight: bold;'>CO<sub>2</sub></span> they generated",
-					"<span style='font-weight: bold;'>CO<sub>2</sub></span> the energy you used at home generated",
-					"<span style='font-weight: bold;'>CO<sub>2</sub></span> emissions"};
+					"<span style='font-weight: normal;'>CO<sub>2</sub></span> they generated",
+					"<span style='font-weight: normal;'>CO<sub>2</sub></span> the energy you used at home generated",
+					"<span style='font-weight: normal;'>CO<sub>2</sub></span> emissions"};
 		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
-			bits = new String[]{"<span style='font-weight: bold;'>energy</span> they use at home",
-					"daily <span style='font-weight: bold;'>energy</span> use is",
-					"<span style='font-weight: bold;'>energy</span>",
+			bits = new String[]{"<span style='font-weight: normal;'>energy</span> they use at home",
+					"daily <span style='font-weight: normal;'>energy</span> use is",
+					"<span style='font-weight: normal;'>energy</span>",
 					"uses",
-					"<span style='font-weight: bold;'>energy</span> you used",
-					"<span style='font-weight: bold;'>energy</span> you used at home",
-					"<span style='font-weight: bold;'>energy</span> use"};
+					"<span style='font-weight: normal;'>energy</span> you used",
+					"<span style='font-weight: normal;'>energy</span> you used at home",
+					"<span style='font-weight: normal;'>energy</span> use"};
 		}
 		
 		int i = 0;

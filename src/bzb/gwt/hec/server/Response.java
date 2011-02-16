@@ -26,12 +26,24 @@ public class Response {
 	@Persistent
 	private long timestamp = System.currentTimeMillis();
 	
+	@Persistent
+	private double target;
+	
+	@Persistent
+	private String ip;
+	
+	@Persistent
+	private String feedback;
+	
 	public Response () {}
 	
-	public Response (String units, String response, long duration) {
+	public Response (String units, String response, long duration, double target, String ip, String feedback) {
 		setUnits(units);
 		setResponse(response);
 		setDuration(duration);
+		setTarget(target);
+		setIp(ip);
+		setFeedback(feedback);
 	}
 
 	public void setUnits(String units) {
@@ -64,6 +76,30 @@ public class Response {
 
 	public long getDuration() {
 		return duration;
+	}
+
+	public void setTarget(double target) {
+		this.target = target;
+	}
+
+	public double getTarget() {
+		return target;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setFeedback(String feedback) {
+		this.feedback = feedback;
+	}
+
+	public String getFeedback() {
+		return feedback;
 	}
 
 }

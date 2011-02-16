@@ -21,24 +21,24 @@ public class FinishPanel extends VerticalPanel {
 	
 	public FinishPanel () {
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
-			bits = new String[]{"<span style='font-weight: bold;'>costs</span>",
-					"energy <span style='font-weight: bold;'>costs</span> were ",
-					"<span style='font-weight: bold;'>costs</span>"};
+			bits = new String[]{"<span style='font-weight: normal;'>costs</span>",
+					"energy <span style='font-weight: normal;'>costs</span> were ",
+					"<span style='font-weight: normal;'>costs</span>"};
 		} else if (HomeEnergyCalc.getFormat() == Format.EMISSIONS) {
-			bits = new String[]{"<span style='font-weight: bold;'>CO<sub>2</sub></span>",
+			bits = new String[]{"<span style='font-weight: normal;'>CO<sub>2</sub></span>",
 					"CO<sub>2</sub> emissions were ",
 					"CO<sub>2</sub>"};
 		} else if (HomeEnergyCalc.getFormat() == Format.ENERGY) {
-			bits = new String[]{"<span style='font-weight: bold;'>energy</span>",
-					"<span style='font-weight: bold;'>energy</span> usage was ",
-					"<span style='font-weight: bold;'>energy</span>"};
+			bits = new String[]{"<span style='font-weight: normal;'>energy</span>",
+					"<span style='font-weight: normal;'>energy</span> usage was ",
+					"<span style='font-weight: normal;'>energy</span>"};
 		}
 	}
 
 	public void update () {
 		int i = 0;
 		
-		String html = "<p>Congratulations! You've reached your " + bits[i++] + " target.</p>" +
+		String html = "<p><span style='font-size: 24pt;'>Congratulations!</span></p><p>You've reached your " + bits[i++] + " target.</p>" +
 				"<h2>Summary</h2>" +
 				"<p>Your daily " + bits[i] + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh()) + "</p>" +
 				"<p>Your monthly " + bits[i++] + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh() * 28) + "</p>" +
@@ -63,10 +63,22 @@ public class FinishPanel extends VerticalPanel {
 		time.setName("time");
 		vp.add(time);
 		
+		final Hidden target = new Hidden();
+		target.setName("target");
+    	target.setValue(Double.toString(ResultsPanel.getTargetKwh()));
+		vp.add(target);
+		
 		final TextArea response = new TextArea();
 		response.setSize(Window.getClientWidth() * 0.8 + "px", "200px");
 		response.setName("response");
 		vp.add(response);
+		
+		vp.add(new HTML("<p>If you have any feedback on the Calculator, please provide it in the space below:</p>"));
+		
+		final TextArea feedback = new TextArea();
+		feedback.setSize(Window.getClientWidth() * 0.8 + "px", "200px");
+		feedback.setName("feedback");
+		vp.add(feedback);
 		
 		final Button submit = new Button("Submit");
 		submit.addClickHandler(new ClickHandler() {
@@ -81,6 +93,7 @@ public class FinishPanel extends VerticalPanel {
 
 		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
+				HomeEnergyCalc.setUid(event.getResults().replaceAll("\\<.*?>",""));
 				HomeEnergyCalc.updateRootPanel(State.LEAVE);
 			}
 		});

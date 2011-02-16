@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ClosingEvent;
+import com.google.gwt.user.client.Window.ClosingHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -27,7 +29,9 @@ public class HomeEnergyCalc implements EntryPoint {
 	private static LeavePanel lp;
 	
 	public enum Format { COST, EMISSIONS, ENERGY };
-	private static Format format = Format.ENERGY;
+	private static Format format;
+	
+	private static String Uid;
 	
 	private static long startTime = System.currentTimeMillis();
 
@@ -122,7 +126,37 @@ public class HomeEnergyCalc implements EntryPoint {
 		appliances.put("Car (>2.0l petrol; >2.2l diesel)", new Appliance("Car (>2.0l petrol; >2.2l diesel)", "car3.png", 225, Appliance.USE_DISTANCE, 6, true, 0));*/
 	}
 
+	public static ClosingHandler wch;
+	
 	public void onModuleLoad() {
+		Window.addWindowClosingHandler(new ClosingHandler() {
+			public void onWindowClosing(ClosingEvent event) {
+				if (HomeEnergyCalc.getState() != State.LEAVE) {
+					event.setMessage("If you refresh or close the Calculator you will lose your current choices. Do you want to do this?");
+				}
+			}
+		});
+		
+		if (Window.Location.getParameter("type") != null) {
+			if (Window.Location.getParameter("type").equals("a")) {
+				setFormat(Format.COST);
+			} else if (Window.Location.getParameter("type").equals("b")) {
+				setFormat(Format.EMISSIONS);
+			} else {
+				setFormat(Format.ENERGY);
+			}
+			RootPanel.get("body").addStyleName(getFormat().name());
+		} else {
+			int rand = (int) Math.floor(Math.random() * 3.0);
+			if (rand == 0) {
+				setFormat(Format.COST);
+			} else if (rand == 1) {
+				setFormat(Format.EMISSIONS);
+			} else {
+				setFormat(Format.ENERGY);
+			}
+			RootPanel.get("body").addStyleName(getFormat().name());
+		}
 		
 		updateRootPanel(State.WORKING);
 		
@@ -161,10 +195,7 @@ public class HomeEnergyCalc implements EntryPoint {
 			RootPanel.get("app").clear();
 			RootPanel.get("app").add(lp);
 		}
-		if (Window.Location.getParameter("type") != null) {
-			setFormat(Format.valueOf(Window.Location.getParameter("type").toUpperCase()));
-			RootPanel.get("body").addStyleName(getFormat().name());
-		}
+		
 		HTML subHTML = new HTML("How much ");
 		if (getFormat() == Format.COST) {
 			subHTML.setHTML(subHTML.getHTML() + " does your daily energy use cost?");
@@ -236,5 +267,13 @@ public class HomeEnergyCalc implements EntryPoint {
 
 	public static long getStartTime() {
 		return startTime;
+	}
+
+	public static String getUid() {
+		return Uid;
+	}
+
+	public static void setUid(String Uid) {
+		HomeEnergyCalc.Uid = Uid;
 	}
 }

@@ -1,6 +1,7 @@
 package bzb.gwt.hec.server;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
@@ -15,11 +16,18 @@ public class Upload extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
     	if (req.getParameter("response") != null) {
-    		Response r = new Response(req.getParameter("units"), req.getParameter("response"), Long.parseLong(req.getParameter("time")));
+    		Response r = new Response(req.getParameter("units"), req.getParameter("response"), Long.parseLong(req.getParameter("time")), Double.parseDouble(req.getParameter("target")), req.getRemoteAddr(), req.getParameter("feedback"));
 	    	PersistenceManager pm = PMF.get().getPersistenceManager();
-	        try {
-	        	pm.makePersistent(r); 
+	        PrintWriter w = null;
+			try {
+	        	pm.makePersistent(r);
+	        	w = res.getWriter();
+	        	w.write(r.getKey());
+	        	w.flush();
 	        } finally {
+	        	if (w != null) {
+	        		w.close();
+	        	}
 	        	pm.close();
 	        }
     	}

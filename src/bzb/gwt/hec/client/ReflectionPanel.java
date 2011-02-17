@@ -130,6 +130,7 @@ public class ReflectionPanel extends FlowPanel {
 				HomeEnergyCalc.updateRootPanel(State.WORKING);
 				WorkingPanel.reset.setVisible(true);
 				WorkingPanel.submit.setVisible(true);
+				WorkingPanel.restart.setVisible(true);
 			}
 		});
 		back.addStyleName("recalcButton");

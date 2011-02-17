@@ -121,6 +121,17 @@ h2 {
 	font-family: arial, helvetica;
 }
 
+.restartButton {
+	color: white !important;
+	padding: 10px !important;
+	background: orange !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+	border: none !important;
+	font-size: 15pt !important;
+	font-family: arial, helvetica;
+}
+
 .getResultsButton {
 	color: white !important;
 	padding: 10px !important;

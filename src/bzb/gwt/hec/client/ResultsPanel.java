@@ -247,11 +247,7 @@ public class ResultsPanel extends VerticalPanel {
 		bl.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		bl.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		bl.add(new HTML("<span class='meterFaceSm'>TOTAL DAY'S USAGE</span>"));
-		if (HomeEnergyCalc.getFormat() == HomeEnergyCalc.Format.COST) {
-			bl.add(new HTML("<span class='meterFaceLg'>" + formatUnits(totalKwh) + "</span>"));
-		} else {
-			bl.add(new HTML("<span class='meterFaceMed'>" + formatUnits(totalKwh) + "</span>"));
-		}
+		bl.add(new HTML("<span class='meterFaceMed'>" + formatUnits(totalKwh) + "</span>"));
 		
 		// current appliance bigger - spread across top
 		
@@ -263,11 +259,7 @@ public class ResultsPanel extends VerticalPanel {
 		br.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		br.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		br.add(new HTML("<span class='meterFaceSm'>TOTAL MONTH'S USAGE</span>"));
-		if (HomeEnergyCalc.getFormat() == HomeEnergyCalc.Format.COST) {
-			br.add(new HTML("<span class='meterFaceLg'>" + formatUnits(totalKwh * 28) + "</span>"));
-		} else {
-			br.add(new HTML("<span class='meterFaceMed'>" + formatUnits(totalKwh * 28) + "</span>"));
-		}
+		br.add(new HTML("<span class='meterFaceMed'>" + formatUnits(totalKwh * 28) + "</span>"));
 		
 		
 		VerticalPanel t = new VerticalPanel();

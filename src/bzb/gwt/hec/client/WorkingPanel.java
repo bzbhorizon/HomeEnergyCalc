@@ -17,6 +17,7 @@ public class WorkingPanel extends HorizontalPanel {
 	
 	static Button reset;
 	static Button submit;
+	static Button restart;
 	static VerticalPanel lhsPanel;
 	
 	public WorkingPanel () {
@@ -29,6 +30,17 @@ public class WorkingPanel extends HorizontalPanel {
 		lhsPanel.add(ap);
 		
 		HorizontalPanel buttons = new HorizontalPanel();
+		
+		restart = new Button("Restart");
+		restart.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				reload();
+			}
+			
+		});
+		restart.addStyleName("restartButton");
+		buttons.add(restart);
 		
 		reset = new Button("Clear all choices");
 		reset.addClickHandler(new ClickHandler() {
@@ -47,6 +59,7 @@ public class WorkingPanel extends HorizontalPanel {
 			public void onClick(ClickEvent event) {
 				reset.setVisible(false);
 				submit.setVisible(false);
+				restart.setVisible(false);
 				HomeEnergyCalc.getFloating().clear();
 				if (!ResultsPanel.metTarget) {
 					HomeEnergyCalc.updateRootPanel(State.REFLECTION);
@@ -68,6 +81,10 @@ public class WorkingPanel extends HorizontalPanel {
 		rp = new ResultsPanel();
 		add(rp);
 	}
+	
+	private native void reload() /*-{ 
+		$wnd.location.reload(); 
+	}-*/; 
 	
 	public static void updateResults () {
 		rp.updateResults();

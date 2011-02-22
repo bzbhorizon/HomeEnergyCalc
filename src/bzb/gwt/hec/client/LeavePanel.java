@@ -1,5 +1,9 @@
 package bzb.gwt.hec.client;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -13,8 +17,19 @@ public class LeavePanel extends VerticalPanel {
 		} else {
 			urlParams = "69218&69218X696X4190";
 		}
-		String url = "<a href='http://www.psychology.nottingham.ac.uk/limesurvey/index.php?sid=" + urlParams + "=" + HomeEnergyCalc.getUid() + "'>Survey</a>";
-		add(new HTML(url));
+		final String url = "http://www.psychology.nottingham.ac.uk/limesurvey/index.php?sid=" + urlParams + "=" + HomeEnergyCalc.getUid();
+		
+		add(new HTML("<p>Thank you for completing the Calculator. Please click the button below to launch a brief survey.</p>"));
+		
+		final Button leave = new Button("Launch survey");
+		leave.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				leave.setEnabled(false);
+				Window.open(url, "self", null);
+			}
+		});
+		add(leave);
+		
 	}
 
 }

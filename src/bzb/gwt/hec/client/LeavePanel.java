@@ -25,7 +25,7 @@ public class LeavePanel extends VerticalPanel {
 		leave.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				leave.setEnabled(false);
-				Window.open(url, "self", null);
+				Window.open(url, "_blank", "");
 			}
 		});
 		add(leave);

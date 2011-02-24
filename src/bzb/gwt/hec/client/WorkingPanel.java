@@ -5,6 +5,8 @@ import bzb.gwt.hec.client.HomeEnergyCalc.State;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -18,10 +20,22 @@ public class WorkingPanel extends HorizontalPanel {
 	static Button reset;
 	static Button submit;
 	static Button restart;
+	static Button help;
 	static VerticalPanel lhsPanel;
 	
 	public WorkingPanel () {
 		setStyleName("horApp");
+		
+		final DialogBox d = new DialogBox();
+		d.setGlassEnabled(true);
+		d.setAutoHideEnabled(true);
+		HTML h = new HTML("<p>To finish the Calculator you'll need to achieve your 5% reduction in " + ResultsPanel.getUnitName().toLowerCase() + ". Once you have beaten your target, the Finish button will turn green.</p>");
+		h.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				d.hide();
+			}
+		});
+		d.setWidget(h);
 		
 		lhsPanel = new VerticalPanel();
 		lhsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -30,6 +44,17 @@ public class WorkingPanel extends HorizontalPanel {
 		lhsPanel.add(ap);
 		
 		HorizontalPanel buttons = new HorizontalPanel();
+		
+		help = new Button("Help");
+		help.addClickHandler(new ClickHandler() {
+
+			public void onClick(ClickEvent event) {
+				HomeEnergyCalc.showBrief();
+			}
+			
+		});
+		help.addStyleName("helpButton");
+		buttons.add(help);
 		
 		restart = new Button("Restart");
 		restart.addClickHandler(new ClickHandler() {
@@ -57,15 +82,21 @@ public class WorkingPanel extends HorizontalPanel {
 		submit = new Button("Calculate target");
 		submit.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				reset.setVisible(false);
-				submit.setVisible(false);
-				restart.setVisible(false);
-				HomeEnergyCalc.getFloating().clear();
-				if (!ResultsPanel.metTarget) {
+				if (ResultsPanel.getTargetKwh() == -1.0) {
+					reset.setVisible(false);
+					submit.setVisible(false);
+					restart.setVisible(false);
+					HomeEnergyCalc.getFloating().clear();
 					HomeEnergyCalc.updateRootPanel(State.REFLECTION);
 					submit.setText("Finish");
-				} else {
+				} else if (ResultsPanel.metTarget) {
+					reset.setVisible(false);
+					submit.setVisible(false);
+					restart.setVisible(false);
+					HomeEnergyCalc.getFloating().clear();
 					HomeEnergyCalc.updateRootPanel(State.FINISH);
+				} else {
+					d.center();
 				}
 			}
 		});
@@ -73,8 +104,6 @@ public class WorkingPanel extends HorizontalPanel {
 		buttons.add(submit);
 		
 		RootPanel.get("floating").add(buttons);
-		
-		
 		
 		add(lhsPanel);
 		

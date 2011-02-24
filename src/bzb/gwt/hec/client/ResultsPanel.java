@@ -217,12 +217,12 @@ public class ResultsPanel extends VerticalPanel {
 			String totalStyle;
 			if (totalKwh > targetKwh) {
 				totalStyle = "red";
-				WorkingPanel.submit.setEnabled(false);
+				//WorkingPanel.submit.setEnabled(false);
 				WorkingPanel.submit.addStyleName("disabledResultsButton");
 				metTarget  = false;
 			} else {
 				totalStyle = "green";
-				WorkingPanel.submit.setEnabled(true);
+				//WorkingPanel.submit.setEnabled(true);
 				WorkingPanel.submit.removeStyleName("disabledResultsButton");
 				metTarget = true;
 			}

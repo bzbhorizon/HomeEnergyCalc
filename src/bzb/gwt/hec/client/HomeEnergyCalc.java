@@ -238,7 +238,7 @@ public class HomeEnergyCalc implements EntryPoint {
 		return state;
 	}
 	
-	public void showBrief () {
+	public static void showBrief () {
 		if (bp == null) {
 			bp = new BriefPanel();
 		}

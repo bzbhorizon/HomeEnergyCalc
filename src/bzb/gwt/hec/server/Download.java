@@ -29,7 +29,7 @@ public class Download extends HttpServlet {
             	Iterator<Response> i = responses.iterator();
             	while (i.hasNext()) {
             		Response r = i.next();
-            		p.write(r.getKey() + ',' + r.getIp() + ',' + r.getTimestamp() + ',' + r.getDuration() + ',' + r.getTarget() + ',' + r.getUnits() + ',' + r.getResponse() + "," + r.getFeedback() + "\n");
+            		p.write('"' + r.getKey() + "\",\"" + r.getIp() + "\",\"" + r.getTimestamp() + "\",\"" + r.getDuration() + "\",\"" + r.getTarget() + "\",\"" + r.getUnits() + "\",\"" + r.getResponse() + "\",\"" + r.getFeedback() + "\"\n");
             	}
             }
         	

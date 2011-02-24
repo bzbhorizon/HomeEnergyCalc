@@ -117,18 +117,29 @@ h2 {
 	-webkit-border-radius: 5px !important;
 	-moz-border-radius: 5px !important;
 	border: none !important;
-	font-size: 15pt !important;
+	font-size: 13pt !important;
 	font-family: arial, helvetica;
 }
 
 .restartButton {
 	color: white !important;
 	padding: 10px !important;
+	background: red !important;
+	-webkit-border-radius: 5px !important;
+	-moz-border-radius: 5px !important;
+	border: none !important;
+	font-size: 13pt !important;
+	font-family: arial, helvetica;
+}
+
+.helpButton {
+	color: white !important;
+	padding: 10px !important;
 	background: orange !important;
 	-webkit-border-radius: 5px !important;
 	-moz-border-radius: 5px !important;
 	border: none !important;
-	font-size: 15pt !important;
+	font-size: 13pt !important;
 	font-family: arial, helvetica;
 }
 
@@ -139,7 +150,7 @@ h2 {
 	-webkit-border-radius: 5px !important;
 	-moz-border-radius: 5px !important;
 	border: none !important;
-	font-size: 15pt !important;
+	font-size: 13pt !important;
 	font-family: arial, helvetica;
 }
 
@@ -332,4 +343,10 @@ img {
 .gwt-DialogBox .dialogBottomRight {
 	border: none !important;
 	background: transparent !important;
+}
+
+.credits {
+	font-style: italic;
+	font-size: 8pt;
+	text-align: center;
 }

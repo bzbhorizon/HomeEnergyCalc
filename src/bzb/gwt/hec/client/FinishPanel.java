@@ -1,10 +1,12 @@
 package bzb.gwt.hec.client;
 
 import bzb.gwt.hec.client.HomeEnergyCalc.Format;
-import bzb.gwt.hec.client.HomeEnergyCalc.State;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -12,12 +14,16 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class FinishPanel extends VerticalPanel {
 	
 	private static String[] bits;
+	
+	private static HTML respCharCount;
+	private static HTML fbCharCount;
 	
 	public FinishPanel () {
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
@@ -35,6 +41,8 @@ public class FinishPanel extends VerticalPanel {
 		}
 	}
 
+	JavaScriptObject window;
+	
 	public void update () {
 		int i = 0;
 		
@@ -44,7 +52,7 @@ public class FinishPanel extends VerticalPanel {
 				"<p>Your monthly " + bits[i++] + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh() * 28) + "</p>" +
 				"<p>With your 5% reduction, you could save " + ResultsPanel.formatUnits(ResultsPanel.getTotalKwh() * 28.0 / 95.0 * 5.0) + " per month</p>" +
 				"<p>Finally, please answer the following question:</p>" +
-				"<p>In the space below, please describe why saving this amount of " + bits[i++] + " is important to you:</p>";
+				"<p>In the space below (in 500 characters or less) please describe why saving this amount of " + bits[i++] + " is important to you:</p>";
 		add(new HTML(html));
 		
 		final FormPanel form = new FormPanel();
@@ -68,21 +76,49 @@ public class FinishPanel extends VerticalPanel {
     	target.setValue(Double.toString(ResultsPanel.getTargetKwh()));
 		vp.add(target);
 		
-		final TextArea response = new TextArea();
-		response.setSize(Window.getClientWidth() * 0.8 + "px", "200px");
-		response.setName("response");
-		vp.add(response);
+		respCharCount = new HTML();
 		
-		vp.add(new HTML("<p>If you have any feedback on the Calculator, please provide it in the space below:</p>"));
+		final TextArea response = new TextArea();
+		response.setSize(Window.getClientWidth() * 0.8 + "px", "100px");
+		response.setName("response");
+		response.addKeyUpHandler(new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event) {
+				if (response.getText().length() > 500) {
+					response.setText(response.getText().substring(0, 500));
+				}
+				respCharCount.setHTML(String.valueOf(500 - response.getText().length()));
+			}
+		});
+		HorizontalPanel respPanel = new HorizontalPanel();
+		respPanel.add(response);
+		respPanel.add(respCharCount);
+		vp.add(respPanel);
+		
+		vp.add(new HTML("<p>If you have any feedback on the Calculator, please provide it (in 500 characters or less) in the space below:</p>"));
+		
+		fbCharCount = new HTML();
 		
 		final TextArea feedback = new TextArea();
-		feedback.setSize(Window.getClientWidth() * 0.8 + "px", "200px");
+		feedback.setSize(Window.getClientWidth() * 0.8 + "px", "100px");
 		feedback.setName("feedback");
-		vp.add(feedback);
+		feedback.addKeyUpHandler(new KeyUpHandler() {
+			public void onKeyUp(KeyUpEvent event) {
+				if (feedback.getText().length() > 500) {
+					feedback.setText(feedback.getText().substring(0, 500));
+				}
+				fbCharCount.setHTML(String.valueOf(500 - feedback.getText().length()));
+			}
+		});
+		HorizontalPanel fbPanel = new HorizontalPanel();
+		fbPanel.add(feedback);
+		fbPanel.add(fbCharCount);
+		vp.add(fbPanel);
 		
 		final Button submit = new Button("Submit");
 		submit.addClickHandler(new ClickHandler() {
 		    public void onClick(ClickEvent event) {
+		    	window = WindowUtil.newWindow("", "file_download", ""); 
+		    	
 		    	time.setValue(Long.toString(System.currentTimeMillis() - HomeEnergyCalc.getStartTime()));
 		        form.submit();
 		        response.setEnabled(false);
@@ -94,7 +130,18 @@ public class FinishPanel extends VerticalPanel {
 		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
 				HomeEnergyCalc.setUid(event.getResults().replaceAll("\\<.*?>",""));
-				HomeEnergyCalc.updateRootPanel(State.LEAVE);
+				//HomeEnergyCalc.updateRootPanel(State.LEAVE);
+				
+				String urlParams;
+				int rand = (int)Math.floor(Math.random() * 2.0);
+				if (rand == 0) {
+					urlParams = "92547&92547X680X4175";
+				} else {
+					urlParams = "69218&69218X696X4190";
+				}
+				final String url = "http://www.psychology.nottingham.ac.uk/limesurvey/index.php?sid=" + urlParams + "=" + HomeEnergyCalc.getUid();
+				
+				WindowUtil.setWindowTarget(window, url);
 			}
 		});
 		

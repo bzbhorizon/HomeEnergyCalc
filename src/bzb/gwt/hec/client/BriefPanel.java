@@ -79,7 +79,8 @@ public class BriefPanel extends DialogBox {
 					"<p>Once you are finished with one activity (e.g. kitchen), please select another activity (e.g. home entertainment) by clicking on the corresponding tab. Please don't forget to include communal uses of appliances (e.g., when you're not the one who cooks but the oven is used to prepare your dinner).</p>" + 
 					"<p>When you have finished selecting all the appliances you used yesterday, please click on <span style='color: white; font-weight: bold; background: green; padding: 3px; -webkit-border-radius: 3px !important; -moz-border-radius: 3px !important;'>Calculate target</span> in the top right of the screen. " +
 					"You will then see the total amount of " + bits[i++] + " in one day, as well as how it is distributed among activities.</p>" +
-					"<p>After that, you will be set a 5% reduction target. You shall then revisit the original screen to consider how to reduce your " + bits[i++] + ". At the end, click on and finally hit <span style='color: white; font-weight: bold; background: green; padding: 3px; -webkit-border-radius: 3px !important; -moz-border-radius: 3px !important;'>Finish</span> to submit responses and answer some brief final questions.</p>");
+					"<p>After that, you will be set a 5% reduction target. You shall then revisit the original screen to consider how to reduce your " + bits[i++] + ". Once you've achieved this reduction, you will be able to click on <span style='color: white; font-weight: bold; background: green; padding: 3px; -webkit-border-radius: 3px !important; -moz-border-radius: 3px !important;'>Finish</span> to submit responses and answer some brief final questions.</p>" +
+					"<p class='credits'>Figures used in the Energy Calculator are based on material from a range of sources, including the Carbon Trust, the Department for Environment, Food and Affairs and the Environmental Change Institute.</p>");
 		text2.setStyleName("briefText");
 		
 		setWidget(vp);

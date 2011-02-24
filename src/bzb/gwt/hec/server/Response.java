@@ -55,6 +55,11 @@ public class Response {
 	}
 
 	public void setResponse(String response) {
+		response = response.trim();
+		if (response.length() > 500) {
+			System.out.println("Response larger than can handle: " + response);
+			response = response.substring(0, 499);
+		}
 		this.response = response;
 	}
 
@@ -95,6 +100,11 @@ public class Response {
 	}
 
 	public void setFeedback(String feedback) {
+		feedback = feedback.trim();
+		if (feedback.length() > 500) {
+			System.out.println("Feedback larger than can handle: " + feedback);
+			feedback = feedback.substring(0, 499);
+		}
 		this.feedback = feedback;
 	}
 

@@ -131,6 +131,7 @@ public class ReflectionPanel extends FlowPanel {
 				WorkingPanel.reset.setVisible(true);
 				WorkingPanel.submit.setVisible(true);
 				WorkingPanel.restart.setVisible(true);
+				WorkingPanel.showHint();
 			}
 		});
 		back.addStyleName("recalcButton");

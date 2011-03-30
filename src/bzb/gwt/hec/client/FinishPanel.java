@@ -1,6 +1,7 @@
 package bzb.gwt.hec.client;
 
 import bzb.gwt.hec.client.HomeEnergyCalc.Format;
+import bzb.gwt.hec.client.HomeEnergyCalc.State;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -24,6 +26,7 @@ public class FinishPanel extends VerticalPanel {
 	
 	private static HTML respCharCount;
 	private static HTML fbCharCount;
+	private static HorizontalPanel submitPanel;
 	
 	public FinishPanel () {
 		if (HomeEnergyCalc.getFormat() == Format.COST) {
@@ -66,6 +69,15 @@ public class FinishPanel extends VerticalPanel {
 		units.setName("units");
 		units.setValue(HomeEnergyCalc.getFormat().name());
 		vp.add(units);
+		
+		Hidden email = new Hidden();
+		email.setName("email");
+		email.setValue(HomeEnergyCalc.getEmail());
+		vp.add(email);
+		
+		final Hidden sidField = new Hidden();
+		sidField.setName("sid");
+		vp.add(sidField);
 		
 		final Hidden time = new Hidden();
 		time.setName("time");
@@ -114,34 +126,47 @@ public class FinishPanel extends VerticalPanel {
 		fbPanel.add(fbCharCount);
 		vp.add(fbPanel);
 		
+		submitPanel = new HorizontalPanel();
+		submitPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		
 		final Button submit = new Button("Submit");
 		submit.addClickHandler(new ClickHandler() {
 		    public void onClick(ClickEvent event) {
-		    	window = WindowUtil.newWindow("", "file_download", ""); 
+		    	window = WindowUtil.newWindow("", "file_download", "");
 		    	
+		    	String sid;
+		    	String urlParams;
+				//int rand = (int)Math.floor(Math.random() * 2.0);
+				//if (rand == 0) {
+					sid = "65157";
+					urlParams = sid + "&" + sid + "X727X4252";
+				//} else {
+				//	sid = "39141";
+				//	urlParams = sid + "&" + sid + "X724X4247";
+				//}
+				final String url = "http://www.psychology.nottingham.ac.uk/limesurvey/index.php?sid=" + urlParams + "=" + HomeEnergyCalc.getEmail();
+				
+				WindowUtil.setWindowTarget(window, url);
+		    	
+				sidField.setValue(sid);
 		    	time.setValue(Long.toString(System.currentTimeMillis() - HomeEnergyCalc.getStartTime()));
 		        form.submit();
 		        response.setEnabled(false);
+		        feedback.setEnabled(false);
 		    	submit.setEnabled(false);
 		    }
 		});
-		vp.add(submit);
+		submitPanel.add(submit);
+		submitPanel.add(new HTML("<p style='color: green;'>Thank you for completing the Energy Calculator; when you click Submit a short survey will load in a new page - please give this a few seconds to load.<br />Once you have completed the survey, feel free to close both pages.</p>"));
+		vp.add(submitPanel);
 
 		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
 			public void onSubmitComplete(SubmitCompleteEvent event) {
-				HomeEnergyCalc.setUid(event.getResults().replaceAll("\\<.*?>",""));
+				//HomeEnergyCalc.setUid(event.getResults().replaceAll("\\<.*?>",""));
+				
 				//HomeEnergyCalc.updateRootPanel(State.LEAVE);
 				
-				String urlParams;
-				int rand = (int)Math.floor(Math.random() * 2.0);
-				if (rand == 0) {
-					urlParams = "92547&92547X680X4175";
-				} else {
-					urlParams = "69218&69218X696X4190";
-				}
-				final String url = "http://www.psychology.nottingham.ac.uk/limesurvey/index.php?sid=" + urlParams + "=" + HomeEnergyCalc.getUid();
-				
-				WindowUtil.setWindowTarget(window, url);
+				HomeEnergyCalc.setState(State.LEAVE);
 			}
 		});
 		

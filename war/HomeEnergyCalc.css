@@ -52,7 +52,7 @@ h2 {
 }
 
 .appliancePanels {
-	margin-right: 40px;	
+	margin-right: 40px;
 }
 
 #sub {
@@ -79,7 +79,32 @@ h2 {
 	-webkit-border-radius: 5px !important;
 	-moz-border-radius: 5px !important;
 }
-	
+
+.applianceFancyButtonText {
+	font-size: 8pt;
+	text-align: center;
+}
+
+.applianceFancyButtonButton {
+	padding: 5px !important;
+	font-size: 7pt !important;
+	background-color: white !important;
+	-webkit-border-radius: 3px !important;
+	-moz-border-radius: 3px !important;
+}
+
+.applianceFancyButton {
+	padding: 5px;
+	margin: 5px;
+	height: 180px;
+	width: 150px;
+	border: 1px dashed #cccccc;
+}
+
+.applianceFancyButtonPressed {
+	border: 2px dashed green;
+}
+
 .gwt-ToggleButton {
 	float: left;
 	width: 100px;

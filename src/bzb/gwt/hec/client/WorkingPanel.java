@@ -4,6 +4,7 @@ import bzb.gwt.hec.client.HomeEnergyCalc.State;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -22,14 +23,16 @@ public class WorkingPanel extends HorizontalPanel {
 	static Button restart;
 	static Button help;
 	static VerticalPanel lhsPanel;
+	static DialogBox d;
 	
 	public WorkingPanel () {
 		setStyleName("horApp");
 		
-		final DialogBox d = new DialogBox();
+		d = new DialogBox();
 		d.setGlassEnabled(true);
 		d.setAutoHideEnabled(true);
-		HTML h = new HTML("<p>To finish the Calculator you'll need to achieve your 5% reduction in " + ResultsPanel.getUnitName().toLowerCase() + ". Once you have beaten your target, the Finish button will turn green.</p>");
+		d.setWidth(Window.getClientWidth() * 0.75 + "px");
+		HTML h = new HTML("<p>To finish the Calculator you'll need to achieve your 5% reduction in " + ResultsPanel.getUnitName().toLowerCase() + ". Look back through the appliances you chose previously (outlined in green) - to decide not to use an appliance, click on it once. To change how you intend to use it, click on it once to remove it, then again to specify how you intend you use it.</p><p>Once you have beaten your target, the Finish button will turn green.</p>");
 		h.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				d.hide();
@@ -71,7 +74,7 @@ public class WorkingPanel extends HorizontalPanel {
 		reset.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				ap.reset();
+				AppliancePanels.reset();
 				rp.updateResults();
 			}
 			
@@ -96,7 +99,7 @@ public class WorkingPanel extends HorizontalPanel {
 					HomeEnergyCalc.getFloating().clear();
 					HomeEnergyCalc.updateRootPanel(State.FINISH);
 				} else {
-					d.center();
+					showHint();
 				}
 			}
 		});
@@ -117,6 +120,10 @@ public class WorkingPanel extends HorizontalPanel {
 	
 	public static void updateResults () {
 		rp.updateResults();
+	}
+	
+	public static void showHint () {
+		d.center();
 	}
 	
 }

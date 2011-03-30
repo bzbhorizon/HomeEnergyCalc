@@ -5,6 +5,13 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import bzb.gwt.hec.client.HomeEnergyCalc.Format;
+import bzb.gwt.hec.client.appliances.Appliance;
+import bzb.gwt.hec.client.appliances.ConstantAppliance;
+import bzb.gwt.hec.client.appliances.PerUseAppliance;
+import bzb.gwt.hec.client.appliances.ProportionAppliance;
+import bzb.gwt.hec.client.appliances.TemperatureAppliance;
+import bzb.gwt.hec.client.appliances.TimedAppliance;
+import bzb.gwt.hec.client.appliances.TravelMode;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -79,7 +86,7 @@ public class ResultsPanel extends VerticalPanel {
 			double catKwh = 0.0;
 			while (appI.hasNext()) {
 				Appliance app = appI.next();
-				if (app.getUse() == Appliance.USE_TIMED && (app.getHours() > 0 || app.getMinutes() > 0)) {
+				if (app.getClass().equals(TimedAppliance.class) && (app.getHours() > 0 || app.getMinutes() > 0)) {
 					double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
 					double hours = (double)app.getHours() + (double)app.getMinutes() * 5.0 / 60.0;
 					double kwh = kw * hours;
@@ -90,21 +97,21 @@ public class ResultsPanel extends VerticalPanel {
 						kwh = kw * hours;
 						catKwh += kwh;
 					}
-				} else if (app.getUse() == Appliance.USE_SINGLE && app.getUses() > 0) {
+				} else if ((app.getClass().equals(PerUseAppliance.class) || app.getClass().getSuperclass().equals(PerUseAppliance.class)) && ((PerUseAppliance)app).getUses() > 0) {
 					double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
-					double tkwh = kwh * app.getUses();
+					double tkwh = kwh * ((PerUseAppliance)app).getUses();
 					catKwh += tkwh;
-				} else if (app.getUse() == Appliance.USE_CONSTANT && app.isConstant()) {
+				} else if (app.getClass().equals(ConstantAppliance.class) && app.isConstant()) {
 					double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
 					catKwh += kwh;
-				} else if (app.getUse() == Appliance.USE_DISTANCE && app.getQuantity() > 0) {
+				} else if (app.getClass().equals(TravelMode.class) && app.getQuantity() > 0) {
 					double kwh = (double)app.getWatts() * KWH_EMISSIONS * app.getQuantity() / 1000 * KM_PER_MILE;
 					catKwh += kwh;
-				} else if (app.getUse() == Appliance.USE_PROPS) {
-					double kwh = (double)app.getWatts() * (double)app.getProps() / 100.0 * app.getQuantity() / 1000 * app.getUses();
+				} else if (app.getClass().equals(ProportionAppliance.class)) {
+					double kwh = (double)app.getWatts() * (double)app.getProps() / 100.0 * app.getQuantity() / 1000 * ((ProportionAppliance)app).getUses();
 					catKwh += kwh;
-				} else if (app.getUse() == Appliance.USE_TEMPS) {
-					double kwh = (double)app.getWatts() * (double)app.getTemps() / 100.0 * app.getQuantity() / 1000 * app.getUses();
+				} else if (app.getClass().equals(TemperatureAppliance.class)) {
+					double kwh = (double)app.getWatts() * (double)app.getTemps() / 100.0 * app.getQuantity() / 1000 * ((TemperatureAppliance)app).getUses();
 					catKwh += kwh;
 				}
 			}
@@ -119,7 +126,7 @@ public class ResultsPanel extends VerticalPanel {
 		Iterator<String> appI = order.iterator();
 		while (appI.hasNext()) {
 			Appliance app = HomeEnergyCalc.getAppliance(appI.next());
-			if (app.getUse() == Appliance.USE_TIMED && (app.getHours() > 0 || app.getMinutes() > 0)) {
+			if (app.getClass().equals(TimedAppliance.class) && (app.getHours() > 0 || app.getMinutes() > 0)) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				double hours = (double)app.getHours() + (double)app.getMinutes() * 5.0 / 60.0;
 				double kwh = kw * hours;
@@ -145,46 +152,46 @@ public class ResultsPanel extends VerticalPanel {
 					}
 					html += " on standby x " + roundToTwo(hours) + " hours = " + formatUnits(kwh) + "</li>";
 				}
-			} else if (app.getUse() == Appliance.USE_PROPS) {
+			} else if (app.getClass().equals(ProportionAppliance.class)) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
-				double kwh = kw * (double)app.getProps() / 100 * app.getUses();
+				double kwh = kw * (double)app.getProps() / 100 * ((ProportionAppliance)app).getUses();
 				totalKwh += kwh;
 				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + app.getUses() + " uses x " + app.getProps() + "% = " + formatUnits(kwh) + "</li>";
+				html += " x " + ((ProportionAppliance)app).getUses() + " uses x " + app.getProps() + "% = " + formatUnits(kwh) + "</li>";
 				
 				if (thisCost == -1) {
 					thisCost = kwh;
 				}
-			} else if (app.getUse() == Appliance.USE_TEMPS) {
+			} else if (app.getClass().equals(TemperatureAppliance.class)) {
 				double kw = (double)app.getWatts() / 1000.0 * app.getQuantity();
-				double kwh = kw * (double)app.getTemps() / 100 * app.getUses();
+				double kwh = kw * (double)app.getTemps() / 100 * ((TemperatureAppliance)app).getUses();
 				totalKwh += kwh;
 				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + app.getUses() + " uses at " + app.getTemps() + " degrees = " + formatUnits(kwh) + "</li>";
+				html += " x " + ((TemperatureAppliance)app).getUses() + " uses at " + app.getTemps() + " degrees = " + formatUnits(kwh) + "</li>";
 				
 				if (thisCost == -1) {
 					thisCost = kwh;
 				}
-			} else if (app.getUse() == Appliance.USE_SINGLE && app.getUses() > 0) {
+			} else if ((app.getClass().equals(PerUseAppliance.class) || app.getClass().getSuperclass().equals(PerUseAppliance.class)) && ((PerUseAppliance)app).getUses() > 0) {
 				double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
-				double tkwh = kwh * app.getUses();
+				double tkwh = kwh * ((PerUseAppliance)app).getUses();
 				totalKwh += tkwh;
 				html += "<li>" + app.getName();
 				if (app.getQuantity() > 1) {
 					html += " (x" + app.getQuantity() + ")";
 				}
-				html += " x " + app.getUses() + " uses = " + formatUnits(tkwh) + "</li>";
+				html += " x " + ((PerUseAppliance)app).getUses() + " uses = " + formatUnits(tkwh) + "</li>";
 				
 				if (thisCost == -1) {
 					thisCost = tkwh;
 				}
-			} else if (app.getUse() == Appliance.USE_CONSTANT && app.isConstant()) {
+			} else if (app.getClass().equals(ConstantAppliance.class) && app.isConstant()) {
 				double kwh = (double)app.getWatts() / 1000.0 * app.getQuantity();
 				totalKwh += kwh;
 				html += "<li>" + app.getName();
@@ -196,7 +203,7 @@ public class ResultsPanel extends VerticalPanel {
 				if (thisCost == -1) {
 					thisCost = kwh;
 				}
-			} else if (app.getUse() == Appliance.USE_DISTANCE && app.getQuantity() > 0) {
+			} else if (app.getClass().equals(TravelMode.class) && app.getQuantity() > 0) {
 				double kwh = (double)app.getWatts() * KWH_EMISSIONS * app.getQuantity() / 1000 * KM_PER_MILE;
 				totalKwh += kwh;
 				html += "<li>" + app.getName();
@@ -340,6 +347,7 @@ public class ResultsPanel extends VerticalPanel {
 	
 	public void reset () {
 		remove(results);
+		order = new ArrayList<String>();
 	}
 	
 	public static String getUnitName () {

@@ -2,116 +2,78 @@ package bzb.gwt.hec.client;
 
 import java.util.ArrayList;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import bzb.gwt.hec.client.appliances.Appliance;
+
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.ToggleButton;
 
 public class AppliancePanels extends TabPanel {
 	
-	private static ApplianceButton[][] buttons;
-	private static FlowPanel[] panels;
-	//private static HomeEnergyCalc home;
-	private static TimingDialog td;
+	private static final int FANCY_BUTTON_WIDTH = 170;
 	
-	public AppliancePanels (/*HomeEnergyCalc home*/) {
-		//AppliancePanels.home = home;
-		buttons = new ApplianceButton[HomeEnergyCalc.getCategories().length][];
-		panels = new FlowPanel[HomeEnergyCalc.getCategories().length];
+	private static ApplianceFancyButton[][] buttons;
+	private static Grid[] grids;
+	private static DetailsDialog td;
+	
+	public AppliancePanels () {
+		buttons = new ApplianceFancyButton[HomeEnergyCalc.getCategories().length][];
+		grids = new Grid[HomeEnergyCalc.getCategories().length];
 		
-		for (int i = 0; i < panels.length; i++) {
-			panels[i] = new FlowPanel();
+		final int width = (int) (Window.getClientWidth() * 0.5);
+		final int buttonsWide = width / FANCY_BUTTON_WIDTH;
+		
+		for (int i = 0; i < grids.length; i++) {
 			ArrayList<Appliance> thisApps = HomeEnergyCalc.getAppliancesInCategory(i);
-			buttons[i] = new ApplianceButton[thisApps.size()];
+			grids[i] = new Grid(thisApps.size() / buttonsWide + 1, buttonsWide);
+			grids[i].setBorderWidth(0);
+			grids[i].setCellPadding(0);
+			grids[i].setCellSpacing(0);
+			CellFormatter f = grids[i].getCellFormatter();
+			buttons[i] = new ApplianceFancyButton[thisApps.size()];
 			int j = 0;
-			for (Appliance app : HomeEnergyCalc.getAppliancesInCategory(i)) {
-				buttons[i][j] = new ApplianceButton(app);
-				panels[i].add(buttons[i][j++]);
+			int r = 0;
+			int c = 0;
+			for (Appliance app : thisApps) {
+				buttons[i][j] = new ApplianceFancyButton(app);
+				grids[i].setWidget(r, c, buttons[i][j++]);
+				f.setAlignment(r, c++, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
+				if (c >= buttonsWide) {
+					r++;
+					c = 0;
+				}
 			}
-			add(panels[i], HomeEnergyCalc.getCategories()[i]);
+			add(grids[i], HomeEnergyCalc.getCategories()[i]);
 		}
 
 	    selectTab(0);
 	    
-	    setWidth(Window.getClientWidth() * 0.5 + "px");
+	    setWidth(width + "px");
 	    
 	    setStyleName("appliancePanels");
 	    
 	}
 	
-	public void reset () {
+	public static void reset () {
 		for (int i = 0; i < buttons.length; i++) {
 			for (int j = 0; j < buttons[i].length; j++) {
-				buttons[i][j].setDown(false);
-				HomeEnergyCalc.getAppliance(buttons[i][j].getUpFace().getText()).reset();
+				buttons[i][j].getAdd().setEnabled(true);
+				buttons[i][j].getRemove().setEnabled(true);
+				HomeEnergyCalc.getAppliance(buttons[i][j].getAppName()).reset();
 			}
 		}
+		ResultsPanel.order = new ArrayList<String>();
 	}
 	
-	public void setTd(TimingDialog td) {
+	public static void setTd(DetailsDialog td) {
 		AppliancePanels.td = td;
 	}
 
-	public TimingDialog getTd() {
+	public static DetailsDialog getTd() {
 		return td;
-	}
-
-	class ApplianceButton extends ToggleButton {
-		
-		private Appliance app;
-		
-		public ApplianceButton (Appliance app) {
-			addStyleName("applianceButton");
-			setApp(app);
-			setHTML(getUpFaceHTML());			
-			addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					if (isDown()) {
-						//setHTML(getDownFaceHTML());
-						getApp().setQuantity(1);
-						if (getApp().getUse() == Appliance.USE_CONSTANT) {
-							getApp().setConstant(true);
-							ResultsPanel.order.add(getApp().getName());
-							WorkingPanel.updateResults();
-						} else {
-							setTd(new TimingDialog(ApplianceButton.this));
-						}
-				    } else {
-				    	setHTML(getUpFaceHTML());
-				    	getApp().reset();
-				    	ResultsPanel.order.remove(getApp().getName());
-				    	WorkingPanel.updateResults();
-				    }
-				}
-			});
-		}
-
-		public void setApp(Appliance app) {
-			this.app = app;
-		}
-
-		public Appliance getApp() {
-			return app;
-		}
-		
-		private String getUpFaceHTML () {
-			if (getApp().getIconURL() != null) {
-				return app.getName() + "<br /><img src='" + app.getIconURL() + "' />";
-			} else {
-				return app.getName();
-			}
-		}
-		
-		private String getDownFaceHTML () {
-			if (getApp().getIconURL() != null) {
-				return app.getName() + " (click to remove)<br /><img src='" + app.getIconURL() + "' />";
-			} else {
-				return app.getName() + " (click to remove)";
-			}
-		}
-		
 	}
 
 }

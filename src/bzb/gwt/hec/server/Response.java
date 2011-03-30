@@ -13,6 +13,9 @@ public class Response {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     @Extension(vendorName = "datanucleus", key = "gae.encoded-pk", value = "false")
 	private String key;
+
+	@Persistent
+	private String email;
 	
 	@Persistent
 	private String units;
@@ -37,7 +40,8 @@ public class Response {
 	
 	public Response () {}
 	
-	public Response (String units, String response, long duration, double target, String ip, String feedback) {
+	public Response (String email, String units, String response, long duration, double target, String ip, String feedback) {
+		setEmail(email);
 		setUnits(units);
 		setResponse(response);
 		setDuration(duration);
@@ -55,7 +59,8 @@ public class Response {
 	}
 
 	public void setResponse(String response) {
-		response = response.trim();
+		response = response.trim().replace("\n", "; ");
+		response = response.trim().replace("\r", "; ");
 		if (response.length() > 500) {
 			System.out.println("Response larger than can handle: " + response);
 			response = response.substring(0, 499);
@@ -100,7 +105,8 @@ public class Response {
 	}
 
 	public void setFeedback(String feedback) {
-		feedback = feedback.trim();
+		feedback = feedback.trim().replace("\n", "; ");
+		feedback = feedback.trim().replace("\r", "; ");
 		if (feedback.length() > 500) {
 			System.out.println("Feedback larger than can handle: " + feedback);
 			feedback = feedback.substring(0, 499);
@@ -110,6 +116,15 @@ public class Response {
 
 	public String getFeedback() {
 		return feedback;
+	}
+
+	public void setEmail(String email) {
+		email = email.trim();
+		this.email = email;
+	}
+
+	public String getEmail() {
+		return email;
 	}
 
 }
